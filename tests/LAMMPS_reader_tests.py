@@ -6,8 +6,8 @@ Created on Wed Jan 31 13:10:30 2024
 """
 
 
-import main
+from LAMMPShade.LAMMPS_reader import convert_value as convert_value
 
 if __name__ == "__main__":
-    prova = main.convert_value('55')
+    prova = convert_value('55')
     print (prova)

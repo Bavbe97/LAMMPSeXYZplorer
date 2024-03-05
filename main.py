@@ -4,7 +4,8 @@ Created on Sun Jan 21 16:18:27 2024
 
 @author: fbarb
 """
-from LAMMPShade import LAMMPS_reader
+import pandas as pd
+import lammpshade as ls
 
 
 file_path = './examples/input_example.yaml'
@@ -13,5 +14,5 @@ step = {}
 
 if __name__ == "__main__":
     with open(file_path, 'r') as file:
-        LAMMPS_reader.read_yaml(file, step)
+        ls.read_yaml(file, step)
         

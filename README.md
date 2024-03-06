@@ -11,6 +11,9 @@ Functionality with older versions is not assured, but will be tested.
 
 LAMMPShade relies on 'pandas', be sure to have it properly installed beforehand.
 
+## Wiki
+Work in progress
+
 ## Contributing
 The project is open to contributions and suggestiong, you can freely open an issue or directly contact me.
 

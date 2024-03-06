@@ -14,4 +14,6 @@ if _missing_dependencies:
 del _hard_dependencies, _dependency, _missing_dependencies
 
 
-from lammpshade.converter import *
+from lammpshade.YAMLReader import *
+from lammpshade.XYZWriter import *
+from lammpshade.Constructor import *

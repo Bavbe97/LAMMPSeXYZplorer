@@ -1,4 +1,4 @@
-_hard_dependencies = ["pandas"]
+_hard_dependencies = ["pandas", "matplotlib"]
 _missing_dependencies = []
 
 for _dependency in _hard_dependencies:

@@ -3,13 +3,13 @@ LAMMPShade aims to be a toolkit for working with LAMMPS (Large-scale Atomic/Mole
 It's an open source library designed to collect useful functions to analyze and convert OUTPUT files and (possibly in the future) generate INPUT files in a fast and efficient way.
 
 ## How to install
-You can download the repo and use it as a simple Python package
+You can download the repo and use it as a simple Python package.
 
 ## Dependencies
-LAMMPShade is tested and working in Python '3.11'.
+LAMMPShade is tested and working in Python `3.11`.
 Functionality with older versions is not assured, but will be tested.
 
-LAMMPShade relies on 'pandas', be sure to have it properly installed beforehand.
+LAMMPShade relies on `pandas`, be sure to have it properly installed beforehand.
 
 ## Wiki
 Work in progress

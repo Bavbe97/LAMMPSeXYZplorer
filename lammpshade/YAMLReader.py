@@ -115,6 +115,31 @@ class YAMLReader:
         # If we reach here, it means there are no more steps
         self.file.close()
         return
+    
+    def get_units(self, keyword):
+        if self.current_step['units'] == 'real' or self.current_step['units'] == 'electron':
+            if keyword == 'Time':
+                return '(fs)'
+            elif  keyword.startswith('v'):
+                return r'($\AA$ / fs)'
+            elif keyword.startswith('f'):
+                return r'(kCal/(mol - $\AA$))'
+            elif keyword.startswith('temp'):
+                return '(K)'
+            else:
+                return ''
+        if self.current_step['units'] == 'metal':
+            if keyword == 'Time':
+                return '(ps)'
+        if self.current_step['units'] == 'si' or self.current_step['units'] == 'cgs':
+            if keyword == 'Time':
+                return '(s)'
+        if self.current_step['units'] == 'micro':
+            if keyword == 'Time':
+                return r'($\mu$s)'
+        if self.current_step['units'] == 'nano':
+            if keyword == 'Time':
+                return '(ns)'
 
 if __name__ == '__main__':
     yaml_reader = YAMLReader('./examples/input_example.yaml')

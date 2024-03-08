@@ -6,6 +6,7 @@ Created on Wed Mar  6 13:53:03 2024
 """
 from lammpshade.YAMLReader import *
 from lammpshade.XYZWriter import *
+from lammpshade.GraphMaker import *
 import pandas as pd
 
 
@@ -54,3 +55,14 @@ class Simulation:
             thermo = pd.DataFrame(self.thermo_data, columns = self.thermo_keywords)
             return thermo
     
+    def get_units(self, keyword):
+        return self.file.get_units(keyword)
+
+    def make_graphs(self, interact = False):
+        self.thermo_data = self.get_thermodata()
+        self.graphs = GraphMaker(self.thermo_data, self.thermo_keywords, self.file)
+        if interact == False:
+            self.graphs.make_graph()
+        else:
+            self.graphs.interact_graph()
+        return

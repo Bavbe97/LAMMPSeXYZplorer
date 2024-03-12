@@ -7,9 +7,10 @@ Created on Wed Mar  6 12:28:31 2024
 
 
 class YAMLReader:
-    def __init__(self, filename):
+    def __init__(self, filename = None):
         self.filename = filename
-        self.file = open(filename, 'r')
+        if self.filename:
+            self.file = open(filename, 'r')
         self.current_step = None
 
     def convert_value(self, value):
@@ -65,56 +66,56 @@ class YAMLReader:
 
     def get_next_step(self):
         step = {}
-        step_reading = False
-        line = self.file.readline()
-        while line:
+        while True:
+            line = self.file.readline()
+            if not line:
+                # End of file reached
+                break
+
             if line.startswith('---'):
-                step_reading = True
-                line = self.file.readline()
+                # Start of a new step
                 continue
 
-            while step_reading:
-                if ':' in line and '-' not in line:
-                    key = line.split(':')[0].strip()
-                    value = line.split(':')[1].strip()
-                    if value != '':
-                        value = self.convert_value(value)
-                        step[key] = value
-                        line = self.file.readline()
-                        continue
-                    else:
-                        line = self.file.readline()
-                        data_reading = True
-                        data_list = []
-                        data_dic = {}
-                        while data_reading:
-                            if '-' in line and ':' not in line:
-                                d_value = line.split('- ')[1]
-                                d_value = self.convert_value(d_value)
-                                data_list.append(d_value)
-                                step[key] = data_list
-                                line = self.file.readline()
-                            elif '-' in line and ':' in line:
-                                d_key = line.replace(' ', '').replace('-', '').split(':')[0]
-                                d_value = line.replace(' ', '').replace('-', '').split(':')[1].strip()
-                                d_value = self.convert_value(d_value)  # missing possibility of list
-                                data_dic[d_key] = d_value
-                                step[key] = data_dic
-                                line = self.file.readline()
-                            else:
-                                data_reading = False
-                                continue
-                elif line.startswith('...'):
-                    step_reading = False
-                    self.current_step = step
-                    return step
-                    break
+            if line.startswith('...'):
+                # End of the current step
+                self.current_step = step
+                return step
+
+            if ':' in line:
+                key, value = line.split(':', 1)
+                key = key.strip()
+                value = value.strip()
+                if value:
+                    value = self.convert_value(value)
+                    step[key] = value
                 else:
-                    step_reading = False
-                    continue
-        # If we reach here, it means there are no more steps
+                    line = self.file.readline()
+                    data_reading = True
+                    data_list = []
+                    data_dic = {}
+                    while data_reading:
+                        if not line or line.startswith('...'):
+                            step_reading = False
+                            self.current_step = step
+                            return step
+                        elif '-' in line and ':' not in line:
+                            d_value = line.split('- ')[1]
+                            d_value = self.convert_value(d_value)
+                            data_list.append(d_value)
+                            line = self.file.readline()
+                        elif '-' in line and ':' in line:
+                            d_key = line.replace(' ', '').replace('-', '').split(':')[0]
+                            d_value = line.replace(' ', '').replace('-', '').split(':')[1].strip()
+                            d_value = self.convert_value(d_value)  # missing possibility of list
+                            data_dic[d_key] = d_value
+                            line = self.file.readline()
+                        else:
+                            data_reading = False
+                            continue
+        # Close the file when done reading
         self.file.close()
-        return
+        return step
+
     
     def get_units(self, keyword):
         if self.current_step['units'] == 'real' or self.current_step['units'] == 'electron':

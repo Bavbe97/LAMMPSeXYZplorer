@@ -9,7 +9,11 @@ You can download the repo and use it as a simple Python package.
 LAMMPShade is tested and working in Python `3.11`.
 Functionality with older versions is not assured, but will be tested.
 
-LAMMPShade relies on `pandas`, be sure to have it properly installed beforehand.
+LAMMPShade relies on the following dependencies:
+- `pandas`
+- 'matplotlib'
+
+Be sure to have them properly installed beforehand.
 
 ## Wiki
 Work in progress

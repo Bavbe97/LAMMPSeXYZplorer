@@ -15,6 +15,8 @@ class Simulation:
         self.file = YAMLReader(filename)
         self.thermo_keywords = None
         self.thermo_data = None
+        self.output = None
+        self.graphs = None
 
     def convert_to_xyz(self, output):
         i = 0
@@ -48,20 +50,23 @@ class Simulation:
                 self.thermo_data.append(step['thermo']['data'])
                 print('Step n. ', i, ' processed')
                 i += 1
-            thermo = pd.DataFrame(self.thermo_data, columns = self.thermo_keywords)
+            thermo = pd.DataFrame(self.thermo_data,
+                                  columns=self.thermo_keywords)
             return thermo
 
         else:
-            thermo = pd.DataFrame(self.thermo_data, columns = self.thermo_keywords)
+            thermo = pd.DataFrame(self.thermo_data,
+                                  columns=self.thermo_keywords)
             return thermo
-    
+
     def get_units(self, keyword):
         return self.file.get_units(keyword)
 
-    def make_graphs(self, interact = False):
+    def make_graphs(self, interact=False):
         self.thermo_data = self.get_thermodata()
-        self.graphs = GraphMaker(self.thermo_data, self.thermo_keywords, self.file)
-        if interact == False:
+        self.graphs = GraphMaker(self.thermo_data, self.thermo_keywords,
+                                 self.file)
+        if not interact:
             self.graphs.make_graph()
         else:
             self.graphs.interact_graph()

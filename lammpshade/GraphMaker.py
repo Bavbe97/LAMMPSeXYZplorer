@@ -16,7 +16,7 @@ class GraphMaker:
         self.file = YAMLReader
         pass
 
-    def make_graph(self):
+    def make_graph(self): # pragma: no cover
         thermo_df = pd.DataFrame(self.thermo_data,
                                  columns=self.thermo_keywords)
         #color = []
@@ -38,7 +38,7 @@ class GraphMaker:
                 #plt show per salvare eventualmente il file
         plt.show()
 
-    def interact_graph(self):
+    def interact_graph(self): # pragma: no cover
         print('Define graphs printing settings:')
         print('The following quantities have been found: ' +
               str(self.thermo_keywords)[1:-1])

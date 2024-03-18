@@ -23,12 +23,21 @@ class YAMLReader:
        value : str
            String that needs to be converted.
 
-       Returns ------- int(value) : int If the content of the string contains only digits, it's converted to an integer.
-       float(value): float If the string contains a dot ('.') and the content is in a valid floating-point format,
-       it's converted to a float. converted_elements: list If the string starts and ends with square brackets ('[', ']'),
-       it's converted to a list of elements. Elements in the list are converted to integers, floats, or remain as strings
-       based on their content. value: str If the content doesn't match any of the conversion criteria, the original
-       string is returned unchanged.
+       Returns
+       -------
+       int(value) : int
+           If the content of the string contains only digits, it's converted
+           to an integer.
+       float(value): float
+           If the string contains a dot ('.') and the content is in a valid
+           floating-point format, it's converted to a float.
+        converted_elements: list
+            If the string starts and ends with square brackets ('[', ']'),
+            it's converted to a list of elements. Elements in the list are
+            converted to integers, floats, or remain as strings based on
+            their content.
+       value: str If the content doesn't match any of the conversion criteria,
+           the original string is returned unchanged.
 
         """
         value = value.strip()
@@ -66,14 +75,15 @@ class YAMLReader:
 
     def get_next_step(self):
         step = {}
+        line = self.file.readline()
         while True:
-            line = self.file.readline()
             if not line:
                 # End of file reached
                 break
 
             if line.startswith('---'):
                 # Start of a new step
+                line = self.file.readline()
                 continue
 
             if line.startswith('...'):
@@ -88,6 +98,7 @@ class YAMLReader:
                 if value:
                     value = self.convert_value(value)
                     step[key] = value
+                    line = self.file.readline()
                 else:
                     line = self.file.readline()
                     data_reading = True
@@ -102,21 +113,26 @@ class YAMLReader:
                             d_value = line.split('- ')[1]
                             d_value = self.convert_value(d_value)
                             data_list.append(d_value)
+                            step[key] = data_list
                             line = self.file.readline()
                         elif '-' in line and ':' in line:
                             d_key = line.replace(' ', '').replace('-', '').split(':')[0]
                             d_value = line.replace(' ', '').replace('-', '').split(':')[1].strip()
-                            d_value = self.convert_value(d_value)  # missing possibility of list
+                            d_value = self.convert_value(d_value)
                             data_dic[d_key] = d_value
+                            step[key] = data_dic
                             line = self.file.readline()
                         else:
                             data_reading = False
                             continue
+            else:
+                line = self.file.readline()
         # Close the file when done reading
         self.file.close()
         return step
 
-    
+    #This should be moved into GraphMaker or simulation?
+    #Add something about getting natoms or something else?
     def get_units(self, keyword):
         if self.current_step['units'] == 'real' or self.current_step['units'] == 'electron':
             if keyword == 'Time':
@@ -141,12 +157,3 @@ class YAMLReader:
         if self.current_step['units'] == 'nano':
             if keyword == 'Time':
                 return '(ns)'
-
-if __name__ == '__main__':
-    yaml_reader = YAMLReader('./examples/input_example.yaml')
-    
-    while True:
-        step = yaml_reader.get_next_step()
-        print(step)
-        if not step:
-            break

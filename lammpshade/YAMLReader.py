@@ -131,29 +131,64 @@ class YAMLReader:
         self.file.close()
         return step
 
-    #This should be moved into GraphMaker or simulation?
-    #Add something about getting natoms or something else?
     def get_units(self, keyword):
-        if self.current_step['units'] == 'real' or self.current_step['units'] == 'electron':
-            if keyword == 'Time':
-                return '(fs)'
-            elif  keyword.startswith('v'):
-                return r'($\AA$ / fs)'
-            elif keyword.startswith('f'):
-                return r'(kCal/(mol - $\AA$))'
-            elif keyword.startswith('temp'):
-                return '(K)'
-            else:
-                return ''
-        if self.current_step['units'] == 'metal':
-            if keyword == 'Time':
-                return '(ps)'
-        if self.current_step['units'] == 'si' or self.current_step['units'] == 'cgs':
-            if keyword == 'Time':
-                return '(s)'
-        if self.current_step['units'] == 'micro':
-            if keyword == 'Time':
-                return r'($\mu$s)'
-        if self.current_step['units'] == 'nano':
-            if keyword == 'Time':
-                return '(ns)'
+        # Check if 'units' attribute is not found in self.current_step
+        keyword = keyword.lower()
+        if 'units' not in self.current_step:
+            raise ValueError("Units attribute not found in current step" +
+                             "\n Check  LAMMPS output file")
+    
+        # Obtain the value of 'units' attribute
+        units = self.current_step['units']
+    
+        # Map units to their corresponding unit format
+        units_mappings = {
+            'real': {
+                    'mass': r'(g/mol)',
+                    'distance': r'($/AA$)',
+                    'time': r'(fs)',
+                    'energy': r'$(kcal/mol)$',
+                    'velocity': r'($\AA$ / fs)',
+                    'force': r'$((kcal/mol)/\AA)$',
+                    'torque': r'$(kcal/mol)$',
+                    'temperature': r'(K)',
+                    'pressure': r'(atm)',
+                    'dynamic viscosity': r'(P)',
+                    'charge': r'm. of e. c.',
+                    'dipole': r'(charge \times \AA)$',
+                    'electric field': r'$(V/\AA)$',
+                    'density': r'($g/cm^\text{dim}$)'
+            },
+            'metal': {
+                    'mass': r'$\frac{\text{g}}{\text{mol}}$',
+                    'distance': r'\AA',
+                    'time': r'ps',
+                    'energy': r'eV',
+                    'velocity': r'$\frac{\text{\AA}}{\text{ps}}$',
+                    'force': r'$\frac{\text{eV}}{\text{\AA}}$',
+                    'torque': r'eV',
+                    'temperature': r'K',
+                    'pressure': r'bar',
+                    'dynamic viscosity': r'P',
+                    'charge': r'multiple of electron charge (1.0 is a proton)',
+                    'dipole': r'$\text{charge}\times\text{\AA}$',
+                    'electric field': r'V/\text{\AA}',
+                    'density': r'$\frac{\text{g}}{\text{cm}^\text{dim}}$'
+            }}
+
+        # Check if the 'units' value exists in the mappings
+        if units in units_mappings:
+            # Check if the keyword matches exactly in the mappings for the corresponding 'units'
+            if keyword in units_mappings[units]:
+                return units_mappings[units][keyword]
+
+            # Check if any prefix matches using startswith()
+            for prefix, unit in units_mappings[units].items():
+                if keyword.startswith(prefix):
+                    return unit
+
+            # If no matching prefix found, raise an error
+            raise ValueError("Units information not available for the given keyword")
+        else:
+            raise ValueError("Invalid units: {}".format(units) +
+                             '\n Check LAMMPS output file and documentation.')

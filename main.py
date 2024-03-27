@@ -4,7 +4,7 @@ Created on Sun Jan 21 16:18:27 2024
 
 @author: fbarb
 """
-import pandas as pd
+
 import lammpshade as ls
 
 prova = ls.Simulation('./examples/input_example.yaml')

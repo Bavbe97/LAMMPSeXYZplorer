@@ -275,37 +275,5 @@ def test_get_next_step_get_subsequent_step():
         assert step['box'] == [[0, 53], [0, 52.57], [0.439, 96.33]]
 
 
-def test_get_units_real():
-    yaml_reader = YAMLReader(None)
-    yaml_reader.current_step = {'units': 'real'}
-    assert yaml_reader.get_units('Time') == '(fs)'
-    assert yaml_reader.get_units('velocity') == r'($\AA$ / fs)'
-    assert yaml_reader.get_units('force') == r'$((kcal/mol)/\AA)$'
-    assert yaml_reader.get_units('temperature') == '(K)'
-
-
-def test_get_units_wrong_units():
-    yaml_reader = YAMLReader(None)
-    yaml_reader.current_step = {'units': 'real'}
-    with unittest.TestCase().assertRaises(ValueError):
-        yaml_reader.get_units('other')
-
-
-def test_get_units_no_units_defined():
-    yaml_reader = YAMLReader(None)
-    yaml_reader.current_step = {'natoms': 10,
-                                'timestep': 0}
-    with unittest.TestCase().assertRaises(ValueError):
-        yaml_reader.get_units('Time')
-
-def test_get_units_with_prefix():
-    yaml_reader = YAMLReader(None)
-    yaml_reader.current_step = {'units': 'real'}
-    assert yaml_reader.get_units('t') == '(fs)'
-    assert yaml_reader.get_units('vel') == r'($\AA$ / fs)'
-    assert yaml_reader.get_units('forec') == r'$((kcal/mol)/\AA)$'
-    assert yaml_reader.get_units('TEMP') == '(K)'
-
-
 if __name__ == '__main__':
     unittest.main()

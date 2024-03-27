@@ -12,10 +12,10 @@ from lammpshade.Constructor import *
 class GraphMaker:
     def __init__(self, thermo_data, thermo_keywords, YAMLReader):
         self.file = YAMLReader
-        self.thermo_df = pd.Dataframe(thermo_data, columns=thermo_keywords)
+        self.thermo_df = pd.DataFrame(thermo_data, columns=thermo_keywords)
         pass
 
-    def make_graph(self, mode): # pragma: no cover
+    def make_graph(self, keywords_list, thermo_df, mode): # pragma: no cover
         #color = []
         #markerstyle = []
         #linestyle = []
@@ -24,26 +24,26 @@ class GraphMaker:
         gridstyle = '--'
         xlabel = 'Time ' + self.file.get_units('Time')
         if mode == 'display':
-            for column in self.thermo_df:
+            for column in keywords_list:
                 if column not in ('Time', 'Step'):
                     fig, ax = plt.subplots()
                     ax.plot(self.thermo_df['Time'], self.thermo_df[column])
                     ax.set_xlabel(xlabel)
                     y = column.replace('c_', '').replace('v_', '')
-                    ylabel = y + ' ' + self.file.get_units(y.split('_')[0])
-                    ax.set_ylabel(ylabel)
+                    #ylabel = y + ' ' + self.file.get_units(y.split('_')[0])
+                    #ax.set_ylabel(ylabel)
                     ax.grid(linestyle=gridstyle)
-                plt.show()
+            plt.show()
 
         if mode == 'stack':
              fig, ax = plt.subplots()
-             for column in self.thermo_df:
+             for column in keywords_list:
                 if column not in ('Time', 'Step'):
-                    ax.plot(self.thermo_df['Time'], self.thermo_df[column])
+                    ax.plot(self.thermo_df['Time'], self.thermo_df[column], label=column)
                     ax.set_xlabel(xlabel)
                     y = column.replace('c_', '').replace('v_', '')
-                    ylabel = y + ' ' + self.file.get_units(y.split('_')[0])
-                    ax.set_ylabel(ylabel)
+                    #ylabel = y + ' ' + self.file.get_units(y.split('_')[0])
+                    #ax.set_ylabel(ylabel)
                     ax.grid(linestyle=gridstyle)
              ax.set_xlabel(xlabel)
              ax.legend()
@@ -52,7 +52,7 @@ class GraphMaker:
     def interact_graph(self): # pragma: no cover
         # Give user info on plottable keywords
         print('The following quantities have been found: ' +
-              str(self.thermo_keywords)[1:-1])
+              str(self.thermo_df.columns))
         
         # Start plotting loop
         while True:
@@ -66,32 +66,31 @@ class GraphMaker:
             print('Stack - Shows a single [Time vs. Quantities] graph\n')
 
             # Obtain input by user
-            graph = input('Select which quantities to display and how:\n')
+            graph_input = input('Select which quantities to display and how:\n')
             # Get data from input
-            prova = graph.replace(' ', '').split('[')
+            graph_input= graph_input.replace(' ', '').split('[')
             # Get plotting mode
-            prova[0] = prova[0].lower
-            # Get keywords to plot
-            keywords_list = prova[1].replace(']', '').split(',')
+            mode = graph_input[0].lower()
 
             # Exit the loop
-            if graph == 'exit':
-                exit
+            if mode == 'exit':
+                break
 
+            # Get keywords to plot
+            keywords_list = graph_input[1].replace(']', '').split(',')
             # Check if input keywords are plottable
             for keyword in keywords_list:
-                if keyword not in self.thermo_keywords:
+                if keyword not in list(self.thermo_df.columns):
                             print('Error: ' + keyword + ' not found')
                             keyword_check = False
 
             if keyword_check:
-                if prova[0].startswith('d'):
+                if mode.startswith('d'):
                     # Plot using display mode
-                    self.make_graph(keywords_list, self.thermo_keywords,
-                                    self.thermo_data, 'display')
-                if prova[0].startswith('s'):
+                    self.make_graph(keywords_list, self.thermo_df, 'display')
+                if mode.startswith('s'):
                      # Plot using stack mode
-                     self.
+                    self.make_graph(keywords_list, self.thermo_df, 'stack')
 
             else:
                 # If input is invalid, restart the loop

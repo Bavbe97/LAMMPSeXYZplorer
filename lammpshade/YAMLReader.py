@@ -38,8 +38,23 @@ units_mappings = {
                     'electric field': r'V/\text{\AA}',
                     'density': r'$\frac{\text{g}}{\text{cm}^\text{dim}}$'
             }}
+
 class YAMLReader:
+    """
+    A class to read YAML-formatted files and extract data.
+
+    Attributes:
+    - filename (str): The path to the YAML file.
+    - file (file object): The file object representing the opened YAML file.
+    - current_step (dict): A dictionary containing data from the current step.
+    """
     def __init__(self, filename = None):
+        """
+        Initializes a YAMLReader object.
+
+        Parameters:
+        - filename (str, optional): The path to the YAML file. Defaults to None.
+        """
         self.filename = filename
         if self.filename:
             self.file = open(filename, 'r')
@@ -68,29 +83,37 @@ class YAMLReader:
             it's converted to a list of elements. Elements in the list are
             converted to integers, floats, or remain as strings based on
             their content.
-       value: str If the content doesn't match any of the conversion criteria,
+       value: str 
+           If the content doesn't match any of the conversion criteria,
            the original string is returned unchanged.
 
         """
+        # Assure right formatting of the value
         value = value.strip()
 
-        if value.isdigit(): #Convert to int
+        # Try to convert
+
+        if value.isdigit():
             return int(value)
 
-        if '.' in value: #Convert to float
+        if '.' in value:
+            # Try to convert it into float
             try:
                 return float(value)
             except ValueError:
                 pass
-
-        if value.startswith('[') and value.endswith(']'): #Convert to list
+        
+        # Check if the value is a list
+        if value.startswith('[') and value.endswith(']'):
+            # Get elements 
             elements = value[1:-1].split(',')
             elements = [elem.strip() for elem in elements]
             converted_elements = []
+            # Try to convert the elements 
             for elem in elements:
-                if elem.isdigit(): #Convert list element to int
+                if elem.isdigit():
                     converted_elements.append(int(elem))
-                elif '.' in elem: #Convert list element to float
+                elif '.' in elem:
                     try:
                         converted_elements.append(float(elem))
                     except ValueError:
@@ -100,17 +123,22 @@ class YAMLReader:
                 else:
                     converted_elements.append(elem)
 
-            return converted_elements #Return list
+            return converted_elements
 
-        return value #Return int, float or string
-        pass
+        return value 
 
     def get_next_step(self):
+        """
+        Reads the next step from the YAML file and returns its data.
+
+        Returns:
+        - dict: A dictionary containing data from the next step.
+        """
         step = {}
         line = self.file.readline()
         while True:
             if not line:
-                # End of file reached
+                # If the end of file is reached, break the loop
                 break
 
             if line.startswith('---'):
@@ -119,11 +147,12 @@ class YAMLReader:
                 continue
 
             if line.startswith('...'):
-                # End of the current step
+                # End of the current step, exit
                 self.current_step = step
                 return step
 
             if ':' in line:
+                # Check for a key-value pair
                 key, value = line.split(':', 1)
                 key = key.strip()
                 value = value.strip()
@@ -132,22 +161,26 @@ class YAMLReader:
                     step[key] = value
                     line = self.file.readline()
                 else:
+                    # Check for a key - list or key - dictionary pair
                     line = self.file.readline()
                     data_reading = True
                     data_list = []
                     data_dic = {}
                     while data_reading:
                         if not line or line.startswith('...'):
+                            # Return function if the step ends abruptly
                             step_reading = False
                             self.current_step = step
                             return step
                         elif '-' in line and ':' not in line:
+                            # Get list
                             d_value = line.split('- ')[1]
                             d_value = self.convert_value(d_value)
                             data_list.append(d_value)
                             step[key] = data_list
                             line = self.file.readline()
                         elif '-' in line and ':' in line:
+                            # Get dictionary
                             d_key = line.replace(' ', '').replace('-', '').split(':')[0]
                             d_value = line.replace(' ', '').replace('-', '').split(':')[1].strip()
                             d_value = self.convert_value(d_value)
@@ -155,22 +188,35 @@ class YAMLReader:
                             step[key] = data_dic
                             line = self.file.readline()
                         else:
+                            # Exit loop
                             data_reading = False
                             continue
             else:
+                # Ensure reading proceeds
                 line = self.file.readline()
         # Close the file when done reading
         self.file.close()
         return step
 
     def get_units(self, keyword):
+        """
+        Retrieves units information for a given keyword from the current step.
+
+        Parameters:
+        - keyword (str): The keyword for which units information is requested.
+
+        Returns:
+        - str: The units corresponding to the provided keyword.
+
+        Raises:
+        - ValueError: If units information is not available for the keyword or the 'units' attribute is not found.
+        """
         # Check if 'units' attribute is not found in self.current_step
         keyword = keyword.lower()
         if 'units' not in self.current_step:
             raise ValueError("Units attribute not found in current step" +
                              "\n Check  LAMMPS output file")
     
-        # Obtain the value of 'units' attribute
         units = self.current_step['units']
 
         # Check if the 'units' value exists in the mappings

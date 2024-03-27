@@ -200,38 +200,3 @@ class YAMLReader:
         self.file.close()
         return step
 
-    def get_units(self, keyword):
-        """
-        Retrieves units information for a given keyword from the current step.
-
-        Parameters:
-        - keyword (str): The keyword for which units information is requested.
-
-        Returns:
-        - str: The units corresponding to the provided keyword.
-
-        Raises:
-        - ValueError: If units information is not available for the keyword or the 'units' attribute is not found.
-        """
-        # Check if 'units' attribute is not found in self.current_step
-        keyword = keyword.lower()
-        if 'units' not in self.current_step:
-            raise ValueError("Units attribute not found in current step" +
-                             "\n Check  LAMMPS output file")
-    
-        units = self.current_step['units']
-
-        # Check if the 'units' value exists in the mappings
-        if units in units_mappings:
-            # Iterate through the units_mappings dictionary
-            for units in units_mappings.values():
-                for key, unit in units.items():
-                    # Match the pattern for the current key with the keyword
-                    if re.search(key, keyword):
-                        return unit
-            
-            # If no matching prefix found, raise an error
-            raise ValueError("Units information not available for the given keyword")
-        else:
-            raise ValueError("Invalid units: {}".format(units) +
-                             '\n Check LAMMPS output file and documentation.')

@@ -5,6 +5,8 @@ Created on Wed Mar  6 12:28:31 2024
 @author: fbarb
 """
 
+import re
+
 units_mappings = {
             'real': {
                     'mass': r'(g/mol)',
@@ -221,15 +223,13 @@ class YAMLReader:
 
         # Check if the 'units' value exists in the mappings
         if units in units_mappings:
-            # Check if the keyword matches exactly in the mappings for the corresponding 'units'
-            if keyword in units_mappings[units]:
-                return units_mappings[units][keyword]
-
-            # Check if any prefix matches using startswith()
-            for prefix, unit in units_mappings[units].items():
-                if keyword.startswith(prefix):
-                    return unit
-
+            # Iterate through the units_mappings dictionary
+            for units in units_mappings.values():
+                for key, unit in units.items():
+                    # Match the pattern for the current key with the keyword
+                    if re.search(key, keyword):
+                        return unit
+            
             # If no matching prefix found, raise an error
             raise ValueError("Units information not available for the given keyword")
         else:

@@ -13,6 +13,10 @@ class TestXYZWriter(unittest.TestCase):
         for file_path in self.created_files:
             if os.path.exists(file_path):
                 os.remove(file_path)
+        # Remove the 'output' directory if it's empty
+        output_dir = os.path.join(os.getcwd(), 'xyz')
+        if os.path.exists(output_dir) and not os.listdir(output_dir):
+            os.rmdir(output_dir)
 
     def test_file_endswith_xyz(self):
         # Test if the file ends with '.xyz'
@@ -30,6 +34,7 @@ class TestXYZWriter(unittest.TestCase):
         # Test if the file already exists and is opened
         filename = "existing_file.xyz"
         file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w') as file:
             file.write("existing content")
         out = XYZWriter(filename)

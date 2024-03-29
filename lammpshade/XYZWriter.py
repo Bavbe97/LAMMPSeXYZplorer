@@ -5,10 +5,25 @@ Created on Wed Mar  6 13:25:10 2024
 @author: fbarb
 """
 import pandas as pd
+import os
 
 class XYZWriter:
-    def __init__(self, output):
-        self.output = open(output, 'w')
+    def __init__(self, filepath):
+        # Check if the file ends with the right format (.xyz)
+        if not filepath.lower().endswith('.xyz'):
+            raise ValueError("File format must be .xyz")
+        
+        # If only the filename is given, create it in the "./xyz/" subdirectory
+        if not os.path.isabs(filepath):
+            filepath = os.path.join(os.getcwd(), 'xyz', filepath)
+        
+        # Check if the file already exists
+        if os.path.exists(filepath):
+            self.output = open(filepath, 'w')
+        else:
+            # If the file does not exist, create it and then open it
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            self.output = open(filepath, 'w')
 
     def write_to_xyz(self, step):
         """Writes data in XYZ format to the specified output file.

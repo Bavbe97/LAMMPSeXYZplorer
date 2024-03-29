@@ -49,27 +49,44 @@ class XYZWriter:
         None
             The function writes the data to the specified output file."""
 
-        # Print number of atoms to .xyz output file
-        self.output.write(str(step['natoms']) + '\n')
-        step['thermo']['keywords'] = [keyword.strip('c_').strip('v_') for
-                                      keyword in step['thermo']['keywords']]
-        thermo_data = '; '.join([f"{key}={val}" for key, val in
-                                 zip(step['thermo']['keywords'],
-                                     step['thermo']['data'])])
-        index = thermo_data.index('Time=')
-        index = index + thermo_data[index:].index(';') + 1
-        thermo_data = (thermo_data[:index] + ' Box=' + str(step['box'])[1:-1]
-                       + ';' + thermo_data[index:])
-        self.output.write(thermo_data + '\n')
+        thermo_check = True
 
-        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
+        # Print number of atoms to .xyz output file
+        try:
+            self.output.write(str(step['natoms']) + '\n')
+        except:
+            raise KeyError
+        try:
+            step['thermo']['keywords'] = [keyword.strip('c_').strip('v_') for
+                                        keyword in step['thermo']['keywords']]
+            thermo_data = '; '.join([f"{key}={val}" for key, val in
+                                    zip(step['thermo']['keywords'],
+                                        step['thermo']['data'])])
+            index = thermo_data.index('Time=')
+            index = index + thermo_data[index:].index(';') + 1
+            thermo_data = (thermo_data[:index] + ' Box=' + str(step['box'])[1:-1]
+                        + ';' + thermo_data[index:])
+            self.output.write(thermo_data + '\n')
+        except:
+            if thermo_check == True:
+                print('Thermo_data was not found\n')
+                print('Program will continue without it')
+                thermo_check = False
+            self.output.write('\n')
+
+        try:
+            atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
+        except:
+            raise KeyError
 
         keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
                         'fz', 'type']
 
         atoms_df = atoms_df.filter(keywords_lst, axis=1)
         if 'element' and 'x' and 'y' and 'z' not in atoms_df.columns:
-            print('Error')
+            raise ValueError("Atoms coordinates (element, x, y, z) not found\n" +
+                             "Check LAMMPS output\n" +
+                             "Program will stop")
         else:
             atoms_df.to_csv(self.output, mode='a', index=False, header=False, sep=" ",
                             lineterminator='\n')

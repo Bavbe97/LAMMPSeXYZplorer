@@ -43,7 +43,8 @@ class TestXYZWriter(unittest.TestCase):
         file_path = os.path.join(os.getcwd(), 'xyz', filename)
         out = XYZWriter(filename)
         self.assertTrue(os.path.exists(file_path))
-        self.assertTrue(out.output.writable()) 
+        self.assertTrue(out.output.writable())
+        self.created_files.append(os.path.join(os.getcwd(), 'xyz', filename))
     
     def test_create_file_in_different_filepath(self):
         with tempfile.TemporaryDirectory() as temp_dir:

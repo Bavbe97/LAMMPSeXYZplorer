@@ -1,7 +1,25 @@
 import pandas as pd
 import os
 
+
 class XYZWriter:
+    """
+    A class used to write data in XYZ format to a specified output file.
+
+    ...
+
+    Attributes
+    ----------
+    output : file object
+        The output file where the data will be written.
+
+    Methods
+    -------
+    write_to_xyz(step)
+        Writes data in XYZ format to the output file.
+    """
+    has_written = False
+
     def __init__(self, filepath):
         # Check if the file ends with the right format (.xyz)
         if not filepath.lower().endswith('.xyz'):
@@ -11,80 +29,126 @@ class XYZWriter:
         if not os.path.isabs(filepath):
             filepath = os.path.join(os.getcwd(), 'xyz', filepath)
         
-        # Check if the file already exists
-        if os.path.exists(filepath):
-            self.output = open(filepath, 'w')
-        else:
-            # If the file does not exist, create it and then open it
-            os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            self.output = open(filepath, 'w')
+        self.filepath = filepath
+        self.output = None
+
+    def __enter__(self):
+        try:
+            mode = 'a' if XYZWriter.has_written else 'w'
+            os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+            self.output = open(self.filepath, mode)
+            XYZWriter.has_written = True
+        except (IOError, OSError) as e:
+            print(f"Failed to open file: {e}")
+            # Handle the error
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.output:
+            try:
+                self.output.close()
+            except (IOError, OSError) as e:
+                print(f"Failed to close file: {e}")
+                # Handle the error
 
     def write_to_xyz(self, step):
-        """Writes data in XYZ format to the specified output file.
+        """
+        Writes the data to the specified output file.
 
         Parameters
         ----------
         step : dict
-            A dictionary containing information necessary for XYZ file generation.
-            The dictionary 'step' should contain keys:
-                 'natoms': The total number of atoms in the structure.
-                 'data': A list of dictionaries where each dictionary represents
-                      an atom's data.
-                 'keywords': A list of strings representing the data keys for
-                      each atom.
-                - 'thermo': A dictionary containing information for thermodynamic
-                      data.
+            A dictionary containing the data to be written to the file. It should contain the following keys:
+            {
+                'natoms': <number of atoms>,
+                'box': <box data>
+                'thermo': {
+                    'keywords': <list of keywords>,
+                    'data': <corresponding data for each keyword>
+                },
+                'keywords': <list of atom keywords>,
+                'data': <list of lists containing atom data>
+            }
+        """
 
-        output : file object
-            The output file object where the XYZ-formatted data will be written.
+        # Check if the required data is present in the step dictionary
+        self.data_check(step, ['natoms', 'data', 'keywords'], 'atoms data')
+        # Check if the required data is present in the keywords list
+        self.data_check(step['keywords'], ['element', 'x', 'y', 'z'], ' atoms coordinates')
 
-        Returns
-        -------
-        None
-            The function writes the data to the specified output file."""
+        # Flag to check if thermo data is available
+        thermo_check = [True]*2
 
-        thermo_check = True
+        # Attempt to write number of atoms to .xyz output file
+        self.output.write(str(step['natoms']) + '\n')
 
-        # Print number of atoms to .xyz output file
+        # Attempt to process and write thermo data to .xyz output file
         try:
-            self.output.write(str(step['natoms']) + '\n')
-        except:
-            raise KeyError
-        try:
-            step['thermo']['keywords'] = [keyword.strip('c_').strip('v_') for
-                                        keyword in step['thermo']['keywords']]
+            # Remove 'c_' and 'v_' prefixes from keywords
+            step['thermo']['keywords'] = [keyword.replace('c_', '').replace('v_', '') for keyword in step['thermo']['keywords']]
+
+            # Create a string of key=value pairs
             thermo_data = '; '.join([f"{key}={val}" for key, val in
                                     zip(step['thermo']['keywords'],
                                         step['thermo']['data'])])
-            index = thermo_data.index('Time=')
-            index = index + thermo_data[index:].index(';') + 1
-            thermo_data = (thermo_data[:index] + ' Box=' + str(step['box'])[1:-1]
+
+            # Check if box data is available
+            if 'box' not in step and thermo_check[1] == True: 
+                print('Box data was not found\n' +
+                      'Program will continue without it')
+                thermo_check[1] = False
+            
+            if 'box' in step:
+                # Find the index of 'Time=' in the string
+                index = thermo_data.index('Time=')
+                index = index + thermo_data[index:].index(';') + 1
+
+                # Insert box data into the string
+                thermo_data = (thermo_data[:index] + ' Box=' + str(step['box'])[1:-1]
                         + ';' + thermo_data[index:])
+            
+            # Write the thermo data to the file
             self.output.write(thermo_data + '\n')
+
         except:
-            if thermo_check == True:
-                print('Thermo_data was not found\n')
-                print('Program will continue without it')
-                thermo_check = False
+            if thermo_check[0] == True:
+                print('Thermo_data was not found\n' + 
+                      'Program will continue without it')
+                thermo_check[0] = False
             self.output.write('\n')
 
-        try:
-            atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
-        except:
-            raise KeyError
+        # Attempt to create a DataFrame from the atom data
+        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
 
+        # List of keywords to be used for reordering the DataFrame columns
         keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
                         'fz', 'type']
 
+        # Filter the DataFrame columns to include only the keywords in the list
         atoms_df = atoms_df.filter(keywords_lst, axis=1)
-        if 'element' and 'x' and 'y' and 'z' not in atoms_df.columns:
-            raise ValueError("Atoms coordinates (element, x, y, z) not found\n" +
-                             "Check LAMMPS output\n" +
-                             "Program will stop")
-        else:
-            atoms_df.to_csv(self.output, mode='a', index=False, header=False, sep=" ",
-                            lineterminator='\n')
-            
-    def close_file(self):
-        self.output.close()
-        return
+
+        # Write the atom data to the file
+        atoms_df.to_csv(self.output, mode='a', index=False, header=False, sep=" ",
+                        lineterminator='\n')
+
+        
+    def data_check(self, step, keys, data_type):
+        """
+        Checks if the required keys are present in the step dictionary.
+
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+        keys : list
+            A list of keys that should be present in the step dictionary.
+
+        Raises
+        ------
+        KeyError
+            If the required keys are not found in the step dictionary.
+        """
+        for key in keys:
+            if key not in step:
+                raise KeyError(f'{data_type} not found in step")
+

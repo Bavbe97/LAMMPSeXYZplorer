@@ -33,23 +33,15 @@ class XYZWriter:
         self.output = None
 
     def __enter__(self):
-        try:
-            mode = 'a' if XYZWriter.has_written else 'w'
-            os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
-            self.output = open(self.filepath, mode)
-            XYZWriter.has_written = True
-        except (IOError, OSError) as e:
-            print(f"Failed to open file: {e}")
-            # Handle the error
+        mode = 'a' if XYZWriter.has_written else 'w'
+        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        self.output = open(self.filepath, mode)
+        XYZWriter.has_written = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.output:
-            try:
-                self.output.close()
-            except (IOError, OSError) as e:
-                print(f"Failed to close file: {e}")
-                # Handle the error
+            self.output.close()
 
     def write_to_xyz(self, step):
         """
@@ -150,5 +142,4 @@ class XYZWriter:
         """
         for key in keys:
             if key not in step:
-                raise KeyError(f'{data_type} not found in step")
-
+                raise KeyError(f"'{data_type}' not found in step.")

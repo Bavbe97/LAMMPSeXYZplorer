@@ -2,33 +2,50 @@ import unittest
 from unittest.mock import patch, MagicMock, mock_open
 from lammpshade.YAMLReader import YAMLReader
 
-class TestXYZWriter(unittest.TestCase):
+class Test__covert_value_YAMLReader(unittest.TestCase):
     def test_convert_value_int(self):
+        """Test that the convert_value method returns an integer when given an integer string."""
+        
         yaml_reader = YAMLReader(None)
+        # Call the convert_value method with an integer string
         assert yaml_reader.convert_value("123") == 123
 
 
     def test_convert_value_float(self):
+        """Test that the convert_value method returns a float when given a float string."""
+
         yaml_reader = YAMLReader(None)
+        # Call the convert_value method with a float string
         assert yaml_reader.convert_value("3.14") == 3.14
 
 
     def test_convert_value_list_integers(self):
+        """Test that the convert_value method returns a list of integers when given a list of integer strings."""
+
         yaml_reader = YAMLReader(None)
+        # Call the convert_value method with a list of integer strings
         assert yaml_reader.convert_value("[1, 2, 3]") == [1, 2, 3]
 
 
     def test_convert_value_list_strings(self):
+        """Test that the convert_value method returns a list of strings when given a list of string strings."""
+
         yaml_reader = YAMLReader(None)
+        # Call the convert_value method with a list of string strings
         assert yaml_reader.convert_value("[hello, world.]") == ['hello', 'world.']
 
 
     def test_convert_value_list_mixed(self):
+        """Test that the convert_value method returns a list of mixed types when given a list of mixed type strings."""
+
         yaml_reader = YAMLReader(None)
+        # Call the convert_value method with a list of mixed type strings
         assert yaml_reader.convert_value("[1, 2.5, hello]") == [1, 2.5, 'hello']
 
-
+class Test_get_next_step_YAMLReader(unittest.TestCase):
     def test_get_next_step_subsequent_key_value_pairs(self):
+        """Test that the get_next_step method returns subsequent key-value pairs from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         natoms: 10
@@ -52,6 +69,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_value_then_key_dictionaries(self):
+        """Test that the get_next_step method returns subsequent key-value pairs and then a key-dictionary pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         natoms: 10
@@ -78,6 +97,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_value_then_key_lists(self):
+        """Test that the get_next_step method returns subsequent key-value pairs and then a key-list pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         natoms: 10
@@ -104,6 +125,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_dictionaries_then_key_lists(self):
+        """Test that the get_next_step method returns subsequent key-dictionary pairs and then a key-list pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         thermo:
@@ -133,6 +156,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_file_ends(self):
+        """Test that the get_next_step method returns an empty dictionary when the YAML file ends."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''...'''
         # Create a mock file object
@@ -154,6 +179,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_lists_then_key_dictionaries(self):
+        """Test that the get_next_step method returns subsequent key-list pairs and then a key-dictionary pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         box:
@@ -183,6 +210,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_dictionaries_then_key_value(self):
+        """Test that the get_next_step method returns subsequent key-dictionary pairs and then a key-value pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         thermo:
@@ -209,6 +238,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_key_lists_then_key_value(self):
+        """Test that the get_next_step method returns subsequent key-list pairs and then a key-value pair from the YAML file."""
+
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         box:
@@ -235,6 +266,8 @@ class TestXYZWriter(unittest.TestCase):
 
 
     def test_get_next_step_get_subsequent_step(self):
+        """Test that the get_next_step method returns subsequent steps from the YAML file."""
+        
         # Define YAML lines to simulate reading from a file
         yaml_lines = [
             "---",

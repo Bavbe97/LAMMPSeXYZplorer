@@ -26,7 +26,7 @@ class XYZWriter:
             raise ValueError("File format must be .xyz")
         
         # If only the filename is given, create it in the "./xyz/" subdirectory
-        if not os.path.isabs(filepath):
+        if not os.path.exists(filepath):
             filepath = os.path.join(os.getcwd(), 'xyz', filepath)
         
         self.filepath = filepath

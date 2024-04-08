@@ -9,7 +9,6 @@ class Simulation:
         self.file = YAMLReader(filepath)
         self.thermo_keywords = None
         self.thermo_data = None
-        self.output = None
         self.graphs = None
 
     def convert_to_xyz(self, output):
@@ -52,9 +51,6 @@ class Simulation:
             thermo = pd.DataFrame(self.thermo_data,
                                   columns=self.thermo_keywords)
             return thermo
-
-    def get_units(self, keyword):
-        return self.file.get_units(keyword)
 
     def make_graphs(self, interact=False):
         self.thermo_data = self.get_thermodata()

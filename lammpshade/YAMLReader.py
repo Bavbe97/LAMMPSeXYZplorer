@@ -45,7 +45,7 @@ class YAMLReader:
     - file (file object): The file object representing the opened YAML file.
     - current_step (dict): A dictionary containing data from the current step.
     """
-    def __init__(self, filename = None):
+    def __init__(self, filename):
         """
         Initializes a YAMLReader object.
 
@@ -54,11 +54,10 @@ class YAMLReader:
         """
         self.filename = filename
         self.current_step = None
-        if self.filename:
-            try:
-                self.file = open(filename, 'r')
-            except FileNotFoundError:
-                raise FileNotFoundError(f"File '{filename}' not found.")
+        try:
+            self.file = open(filename, 'r')
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File '{filename}' not found.")
 
     def convert_value(self, value):
         """
@@ -93,7 +92,7 @@ class YAMLReader:
 
         # Try to convert
 
-        if value.isdigit():
+        if value.isdigit() or (value.startswith('-') and value[1:].isdigit()):
             return int(value)
 
         if '.' in value:
@@ -111,7 +110,7 @@ class YAMLReader:
             converted_elements = []
             # Try to convert the elements 
             for elem in elements:
-                if elem.isdigit():
+                if elem.isdigit() or (elem.startswith('-') and elem[1:].isdigit()):
                     converted_elements.append(int(elem))
                 elif '.' in elem:
                     try:
@@ -181,8 +180,8 @@ class YAMLReader:
                             line = self.file.readline()
                         elif '-' in line and ':' in line:
                             # Get dictionary
-                            d_key = line.replace(' ', '').replace('-', '').split(':')[0]
-                            d_value = line.replace(' ', '').replace('-', '').split(':')[1].strip()
+                            d_key = line.replace(' ', '').split(':')[0].replace('-', '')
+                            d_value = line.split(':')[1]
                             d_value = self.convert_value(d_value)
                             data_dic[d_key] = d_value
                             step[key] = data_dic

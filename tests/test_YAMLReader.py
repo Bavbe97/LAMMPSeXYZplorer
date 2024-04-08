@@ -1,28 +1,45 @@
 import unittest
+import os
 from unittest.mock import patch, MagicMock, mock_open
 from lammpshade.YAMLReader import YAMLReader
 
-class Test__covert_value_YAMLReader(unittest.TestCase):
+
+class Test_YAMLReader__init__(unittest.TestCase):
+    """Test the constructor of the YAMLReader class."""
+    def test_init_file_not_found(self):
+        """Test that the constructor raises a FileNotFoundError when the file is not found."""
+        
+        with self.assertRaises(FileNotFoundError):
+            # Instantiate the YAMLReader class with a non-existent filename
+            YAMLReader("non_existent_file.yaml")
+
+class Test_YAMLReader__convert_value(unittest.TestCase):
+    """Tests the convert_value method of the YAMLReader class."""
     def test_convert_value_int(self):
         """Test that the convert_value method returns an integer when given an integer string."""
         
-        yaml_reader = YAMLReader(None)
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with an integer string
         assert yaml_reader.convert_value("123") == 123
+        assert yaml_reader.convert_value("-123") == -123
 
 
     def test_convert_value_float(self):
         """Test that the convert_value method returns a float when given a float string."""
 
-        yaml_reader = YAMLReader(None)
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a float string
         assert yaml_reader.convert_value("3.14") == 3.14
+        assert yaml_reader.convert_value("-3.14") == -3.14
+        assert yaml_reader.convert_value("3.14e-2") == 3.14e-2
+        assert yaml_reader.convert_value("-3.14e-2") == -3.14e-2
+        assert yaml_reader.convert_value("3.14e2") == 3.14e2
 
 
     def test_convert_value_list_integers(self):
         """Test that the convert_value method returns a list of integers when given a list of integer strings."""
 
-        yaml_reader = YAMLReader(None)
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a list of integer strings
         assert yaml_reader.convert_value("[1, 2, 3]") == [1, 2, 3]
 
@@ -30,7 +47,7 @@ class Test__covert_value_YAMLReader(unittest.TestCase):
     def test_convert_value_list_strings(self):
         """Test that the convert_value method returns a list of strings when given a list of string strings."""
 
-        yaml_reader = YAMLReader(None)
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a list of string strings
         assert yaml_reader.convert_value("[hello, world.]") == ['hello', 'world.']
 
@@ -38,11 +55,11 @@ class Test__covert_value_YAMLReader(unittest.TestCase):
     def test_convert_value_list_mixed(self):
         """Test that the convert_value method returns a list of mixed types when given a list of mixed type strings."""
 
-        yaml_reader = YAMLReader(None)
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a list of mixed type strings
         assert yaml_reader.convert_value("[1, 2.5, hello]") == [1, 2.5, 'hello']
 
-class Test_get_next_step_YAMLReader(unittest.TestCase):
+class Test_YAMLReader__get_next_step(unittest.TestCase):
     def test_get_next_step_subsequent_key_value_pairs(self):
         """Test that the get_next_step method returns subsequent key-value pairs from the YAML file."""
 
@@ -215,8 +232,8 @@ class Test_get_next_step_YAMLReader(unittest.TestCase):
         # Define YAML content to simulate reading from a file
         yaml_content = '''---
         thermo:
-        - keywords: [ Step, Time, Quantity, ]
-        - data: [ 0, 0, 300.01337588855796, ]
+        - keywords: [ Step, Time, Quantity, Negative, Exponential, ]
+        - data: [ 0, 0, 300.01337588855796, -26, -6.5e-3, ]
         natoms: 10
         ...'''
         # Create a mock file object
@@ -230,8 +247,8 @@ class Test_get_next_step_YAMLReader(unittest.TestCase):
             # Call the get_next_step method
             step = yaml_reader.get_next_step()
             # Assert the expected behaviour
-            assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity']
-            assert step['thermo']['data'] == [0, 0, 300.01337588855796]
+            assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity', 'Negative', 'Exponential']
+            assert step['thermo']['data'] == [0, 0, 300.01337588855796, -26, -6.5e-3]
             assert step['natoms'] == 10
             # Verify that the close method of the mock file object is called exactly once
             mock_file.close.assert_called_once()

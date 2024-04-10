@@ -41,7 +41,6 @@ class Simulation:
         self.file = YAMLReader(filepath)
         self.thermo_keywords = None
         self.thermo_data = None
-        self.graphs = None
 
     def convert_to_xyz(self, output):
         """
@@ -117,19 +116,9 @@ class Simulation:
                                   columns=self.thermo_keywords)
             return thermo
 
-    def make_graphs(self, interact=False):
+    def make_graphs(self):
         """
-        Creates graphs from the thermo data.
-
-        Parameters:
-        - interact: Whether to interactively display the graphs.
-
+        Creates an istance of the GraphMaker class.
         """
-        self.thermo_data = self.get_thermodata()
-        self.graphs = GraphMaker(self.thermo_data, self.thermo_keywords,
-                                 self.file)
-        if not interact:
-            self.graphs.make_graph()
-        else:
-            self.graphs.interact_graph()
-        return
+        thermo_df = self.get_thermodata()
+        self.graphs = GraphMaker(thermo_df)

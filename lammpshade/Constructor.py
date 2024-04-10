@@ -13,6 +13,7 @@ class Simulation:
 
     def convert_to_xyz(self, output):
         i = 0
+        thermo_flag = True
         self.output = XYZWriter(output)
         with self.output as out:
             while True:
@@ -20,29 +21,43 @@ class Simulation:
                 if not step:
                     break
                 else:
-                    if self.thermo_data is None:
-                        self.thermo_data = []
-                        self.thermo_keywords = step['thermo']['keywords']
-                        self.thermo_data.append(step['thermo']['data'])
-                    else:
-                        self.thermo_data.append(step['thermo']['data'])
+                    while thermo_flag:
+                        if self.thermo_data is None:
+                            self.thermo_data = []
+                            try:
+                                self.thermo_keywords = step['thermo']['keywords']
+                                self.thermo_data.append(step['thermo']['data'])
+                            except:
+                                print('No thermo data found in the file')
+                                thermo_flag = False
+                                pass
+                        else:
+                            self.thermo_data.append(step['thermo']['data'])
                     out.write_to_xyz(step)
                     print('Step n. ', i, ' processed')
                     i += 1
 
     def get_thermodata(self):
         i = 0
+        thermo_flag = True
         if self.thermo_data is None:
             self.thermo_data = []
             while True:
                 step = self.file.get_next_step()
                 if not step:
                     break
-                if self.thermo_keywords is None:
-                    self.thermo_keywords = step['thermo']['keywords']
-                self.thermo_data.append(step['thermo']['data'])
-                print('Step n. ', i, ' processed')
-                i += 1
+                while thermo_flag:
+                    if self.thermo_keywords is None:
+                        try:
+                            self.thermo_keywords = step['thermo']['keywords']
+                        except:
+                            print('No thermo data found in the file')
+                            thermo_flag = False
+                            return
+                        self.thermo_keywords = step['thermo']['keywords']
+                    self.thermo_data.append(step['thermo']['data'])
+                    print('Step n. ', i, ' processed')
+                    i += 1
             thermo = pd.DataFrame(self.thermo_data,
                                   columns=self.thermo_keywords)
             return thermo

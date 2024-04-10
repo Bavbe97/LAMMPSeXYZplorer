@@ -1,40 +1,12 @@
-import re
+"""
+This module provides a class for reading YAML-formatted files and extracting data.
 
+Module Attributes:
+- None
 
-units_mappings = {
-            'real': {
-                    'mass': r'(g/mol)',
-                    'distance': r'($/AA$)',
-                    'time': r'(fs)',
-                    'energy': r'$(kcal/mol)$',
-                    'velocity': r'($\AA$ / fs)',
-                    'force': r'$((kcal/mol)/\AA)$',
-                    'torque': r'$(kcal/mol)$',
-                    'temperature': r'(K)',
-                    'pressure': r'(atm)',
-                    'dynamic viscosity': r'(P)',
-                    'charge': r'm. of e. c.',
-                    'dipole': r'(charge \times \AA)$',
-                    'electric field': r'$(V/\AA)$',
-                    'density': r'($g/cm^\text{dim}$)'
-            },
-            'metal': {
-                    'mass': r'$\frac{\text{g}}{\text{mol}}$',
-                    'distance': r'\AA',
-                    'time': r'ps',
-                    'energy': r'eV',
-                    'velocity': r'$\frac{\text{\AA}}{\text{ps}}$',
-                    'force': r'$\frac{\text{eV}}{\text{\AA}}$',
-                    'torque': r'eV',
-                    'temperature': r'K',
-                    'pressure': r'bar',
-                    'dynamic viscosity': r'P',
-                    'charge': r'multiple of electron charge (1.0 is a proton)',
-                    'dipole': r'$\text{charge}\times\text{\AA}$',
-                    'electric field': r'V/\text{\AA}',
-                    'density': r'$\frac{\text{g}}{\text{cm}^\text{dim}}$'
-            }}
-
+Classes:
+- YAMLReader: A class to read YAML-formatted files and extract data.
+"""
 
 class YAMLReader:
     """
@@ -45,12 +17,16 @@ class YAMLReader:
     - file (file object): The file object representing the opened YAML file.
     - current_step (dict): A dictionary containing data from the current step.
     """
+
     def __init__(self, filename):
         """
         Initializes a YAMLReader object.
 
         Parameters:
         - filename (str, optional): The path to the YAML file. Defaults to None.
+
+        Raises:
+        - FileNotFoundError: If the specified file is not found.
         """
         self.filename = filename
         self.current_step = None
@@ -61,37 +37,21 @@ class YAMLReader:
 
     def convert_value(self, value):
         """
-
         Converts a string variable to an INT, FLOAT, or LIST based on its content.
 
-       Parameters
-       ----------
-       value : str
-           String that needs to be converted.
+        Parameters:
+        - value (str): String that needs to be converted.
 
-       Returns
-       -------
-       int(value) : int
-           If the content of the string contains only digits, it's converted
-           to an integer.
-       float(value): float
-           If the string contains a dot ('.') and the content is in a valid
-           floating-point format, it's converted to a float.
-        converted_elements: list
-            If the string starts and ends with square brackets ('[', ']'),
-            it's converted to a list of elements. Elements in the list are
-            converted to integers, floats, or remain as strings based on
-            their content.
-       value: str 
-           If the content doesn't match any of the conversion criteria,
-           the original string is returned unchanged.
-
+        Returns:
+        - int(value) (int): If the content of the string contains only digits, it's converted to an integer.
+        - float(value) (float): If the string contains a dot ('.') and the content is in a valid floating-point format, it's converted to a float.
+        - converted_elements (list): If the string starts and ends with square brackets ('[', ']'), it's converted to a list of elements. Elements in the list are converted to integers, floats, or remain as strings based on their content.
+        - value (str): If the content doesn't match any of the conversion criteria, the original string is returned unchanged.
         """
         # Assure right formatting of the value
         value = value.strip()
 
         # Try to convert
-
         if value.isdigit() or (value.startswith('-') and value[1:].isdigit()):
             return int(value)
 
@@ -101,14 +61,14 @@ class YAMLReader:
                 return float(value)
             except ValueError:
                 pass
-        
+
         # Check if the value is a list
         if value.startswith('[') and value.endswith(']'):
-            # Get elements 
+            # Get elements
             elements = value[1:-1].split(',')
             elements = [elem.strip() for elem in elements]
             converted_elements = []
-            # Try to convert the elements 
+            # Try to convert the elements
             for elem in elements:
                 if elem.isdigit() or (elem.startswith('-') and elem[1:].isdigit()):
                     converted_elements.append(int(elem))
@@ -124,7 +84,7 @@ class YAMLReader:
 
             return converted_elements
 
-        return value 
+        return value
 
     def get_next_step(self):
         """

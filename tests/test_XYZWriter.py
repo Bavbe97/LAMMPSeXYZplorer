@@ -5,7 +5,7 @@ import os
 import tempfile
 
 
-class Test_init_XYZWriter(unittest.TestCase):
+class Test_XYZWriter_init_(unittest.TestCase):
     def setUp(self):
         self.created_files = []
 
@@ -70,7 +70,7 @@ class Test_init_XYZWriter(unittest.TestCase):
                 self.created_files.append(full_filepath)
 
 
-class Test_write_to_xyz_XYZWriter(unittest.TestCase):
+class Test_XYZWriter_write_to_xyz(unittest.TestCase):
 
     def setUp(self):
         self.created_files = []
@@ -194,7 +194,7 @@ class Test_write_to_xyz_XYZWriter(unittest.TestCase):
         self.assertIn('N 0.3 0.31 0.4 5 0.6 77 -88.8 test 0 0\n', content)
         self.created_files.append(os.path.join(os.getcwd(), 'xyz', filename))
 
-class Test_contest_manager_XYZWriter(unittest.TestCase):
+class Test_XYZWriter_contest_manager(unittest.TestCase):
     def setUp(self):
         self.created_files = []
 

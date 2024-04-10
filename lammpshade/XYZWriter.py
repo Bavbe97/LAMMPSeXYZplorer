@@ -1,6 +1,12 @@
 import pandas as pd
 import os
+import pandas as pd
+import os
 
+
+"""
+This module contains the XYZWriter class for writing data in XYZ format to a specified output file.
+"""
 
 class XYZWriter:
     """
@@ -18,6 +24,7 @@ class XYZWriter:
     write_to_xyz(step)
         Writes data in XYZ format to the output file.
     """
+
     has_written = False
 
     def __init__(self, filepath):
@@ -50,7 +57,7 @@ class XYZWriter:
         Parameters
         ----------
         step : dict
-            A dictionary containing the data to be written to the file. It should contain the following keys:
+            A dictionary containing the data to be written to the file. It should AT LEAST contain the following keys:
             {
                 'natoms': <number of atoms>,
                 'box': <box data>

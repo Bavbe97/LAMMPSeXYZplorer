@@ -1,4 +1,4 @@
-![Python package](https://github.com/Bavbe97/LAMMPShade/actions/workflows/python-package.yml/badge.svg)
+![Unit Tests](https://github.com/Bavbe97/LAMMPShade/actions/workflows/python-package.yml/badge.svg)
 # LAMMPShade
 LAMMPShade aims to be a toolkit for working with LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) simulations.
 It's an open source library designed to collect useful functions to analyze and convert OUTPUT files and (possibly in the future) generate INPUT files in a fast and efficient way.

@@ -108,4 +108,26 @@ class GraphMaker:
                 for column in df.columns:
                     if column != 'time':
                         ax.plot(df['time'], df[column]) # pragma: no cover
-        plt.show()
+        plt.show() # pragma: no cover
+
+    def run(self, keywords_list, mode = 'display'):
+        """
+        Runs the graph maker based on the provided keywords list and mode.
+
+        Args:
+            keywords_list (list): The list of keywords to be processed.
+            mode (str): The mode in which the graph maker should run.
+
+        Returns:
+            None
+        """
+        self.keywords_list = keywords_list
+        columns = self.process_columns()
+        if mode == 'display':
+            self.plot_graph(columns)
+        elif mode == 'interactive':
+            self.interactive_mode()
+            pass
+    
+    def interactive_mode(self):
+        return

@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
 from lammpshade.GraphMaker import GraphMaker
+from unittest.mock import patch, MagicMock
 
 class Test_GraphMaker_init_(unittest.TestCase):
     """
@@ -141,7 +142,7 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
     """
     Test case for the plot_graph method of the GraphMaker class.
     """
-    
+
     def setUp(self):
         """
         Set up test data and objects.
@@ -150,8 +151,10 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
         self.test_df = pd.DataFrame(data, columns=keywords)
         self.graph_maker = GraphMaker(self.test_df)
-
-    def test_plot_graph_with_columns(self):
+    
+    @patch('matplotlib.pyplot.show')
+    @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
+    def test_plot_graph_with_columns(self, mock_subplots, mock_show):
         """
         Test the plot_graph method with provided columns.
 
@@ -160,10 +163,18 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
 
         The test passes if the graph is plotted without any errors.
         """
+        # Create a mock for the ax object
+        mock_fig, mock_ax = mock_subplots.return_value
+
         columns = ['mass', 'energy']
         self.graph_maker.plot_graph(columns)
 
-    def test_plot_graph_with_df(self):
+        # Verify that ax.plot was called the correct number of times
+        self.assertEqual(mock_ax.plot.call_count, len(columns))
+
+    @patch('matplotlib.pyplot.show')
+    @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
+    def test_plot_graph_with_df(self, mock_show, mock_subplots):
         """
         Test the plot_graph method with provided dataframe.
 
@@ -172,10 +183,18 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
 
         The test passes if the graph is plotted without any errors.
         """
+        # Create a mock for the ax object
+        mock_fig, mock_ax = mock_subplots.return_value
+
         columns = ['mass', 'energy']
         self.graph_maker.plot_graph(columns, df=self.test_df)
 
-    def test_plot_graph_with_x_y(self):
+        # Verify that ax.plot was called the correct number of times
+        self.assertEqual(mock_ax.plot.call_count, len(columns))
+
+    @patch('matplotlib.pyplot.show')
+    @patch('matplotlib.pyplot.subplots')
+    def test_plot_graph_with_x_y(self, mock_subplots, mock_show):
         """
         Test the plot_graph method with provided x and y values.
 
@@ -186,9 +205,19 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
         """
         x = [1, 2, 3, 4, 5]
         y = [2, 4, 6, 8, 10]
+
+        # Create a mock for the ax object
+        mock_ax = MagicMock()
+        mock_subplots.return_value = (MagicMock(), mock_ax)
+
         self.graph_maker.plot_graph([], x=x, y=y)
 
-    def test_plot_graph_default(self):
+        # Verify that ax.plot was called with the expected arguments
+        mock_ax.plot.assert_called_once_with(x, y)
+
+    @patch('matplotlib.pyplot.show')
+    @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
+    def test_plot_graph_default(self, mock_subplots, mock_show):
         """
         Test the plot_graph method with default parameters.
 
@@ -197,7 +226,56 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
 
         The test passes if the graph is plotted without any errors.
         """
+        # Create a mock for the ax object
+        mock_fig, mock_ax = mock_subplots.return_value
+
         self.graph_maker.plot_graph([])
+
+        # Verify that ax.plot was called the correct number of times
+        self.assertEqual(mock_ax.plot.call_count, len(self.test_df.columns) - 1)
+    
+class Test_GraphMaker_run(unittest.TestCase):
+    """
+    Test case for the run method of the GraphMaker class.
+    """
+
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4 , 5], [2, 4, 6, 8, 10], [3, 6, 9, 12, 15]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        self.test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(self.test_df)
+
+    @patch('matplotlib.pyplot.show')
+    @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
+    def test_run_display_mode(self, mock_show, mock_subplots):
+        """
+        Test the run method with display mode.
+
+        This test case checks if the run method correctly plots the graph when
+        the mode is set to 'display'.
+
+        The test passes if the graph is plotted without any errors.
+        """
+        keywords_list = ['mass', 'energy']
+        self.graph_maker.run(keywords_list, mode='display')
+
+    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    def test_run_interactive_mode(self, mock_interactive_mode):
+        """
+        Test the run method with interactive mode.
+
+        This test case checks if the run method correctly handles the interactive
+        mode operations when the mode is set to 'interactive'.
+
+        The test passes if the run method executes the interactive mode operations
+        without any errors.
+        """
+        keywords_list = ['mass', 'energy']
+        self.graph_maker.run(keywords_list, mode='interactive')
+        self.assertTrue(mock_interactive_mode.called)
 
 if __name__ == '__main__':
     unittest.main()

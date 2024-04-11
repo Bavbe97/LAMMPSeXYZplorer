@@ -116,9 +116,22 @@ class Simulation:
                                   columns=self.thermo_keywords)
             return thermo
 
-    def make_graphs(self):
-        """
-        Creates an istance of the GraphMaker class.
-        """
-        thermo_df = self.get_thermodata()
-        self.graphs = GraphMaker(thermo_df)
+    def make_graphs(self, mode='display'):
+            """
+            Creates an instance of the GraphMaker class and generates graphs based on thermodynamic data.
+
+            Parameters:
+                mode (str): The mode in which the graphs should be generated. Default is 'display'.
+
+            Returns:
+                None
+
+            Raises:
+                ValueError: If an invalid mode is provided. Valid values are "display" and "interactive".
+            """
+            thermo_df = self.get_thermodata()
+            self.graphs = GraphMaker(thermo_df)
+            if not mode.startswith('d') and not mode.startswith('i'):
+                raise ValueError('Invalid mode'
+                                 'Valid values are "display" and "interactive"')
+            self.graphs.run(mode)

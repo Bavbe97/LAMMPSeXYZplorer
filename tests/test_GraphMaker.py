@@ -1,7 +1,9 @@
+import sys
 import unittest
 import pandas as pd
 from lammpshade.GraphMaker import GraphMaker
 from unittest.mock import patch, MagicMock
+from io import StringIO
 
 class Test_GraphMaker_init_(unittest.TestCase):
     """
@@ -148,7 +150,7 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
         Set up test data and objects.
         """
         data = [[1, 2, 3, 4 , 5], [2, 4, 6, 8, 10], [3, 6, 9, 12, 15]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        keywords = ['mass', 'distance', 'Time', 'energy', 'velocity']
         self.test_df = pd.DataFrame(data, columns=keywords)
         self.graph_maker = GraphMaker(self.test_df)
     
@@ -174,7 +176,7 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
 
     @patch('matplotlib.pyplot.show')
     @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
-    def test_plot_graph_with_df(self, mock_show, mock_subplots):
+    def test_plot_graph_with_df(self, mock_subplots, mock_show):
         """
         Test the plot_graph method with provided dataframe.
 
@@ -248,34 +250,147 @@ class Test_GraphMaker_run(unittest.TestCase):
         self.test_df = pd.DataFrame(data, columns=keywords)
         self.graph_maker = GraphMaker(self.test_df)
 
-    @patch('matplotlib.pyplot.show')
-    @patch('matplotlib.pyplot.subplots', return_value=(MagicMock(), MagicMock()))
-    def test_run_display_mode(self, mock_show, mock_subplots):
+    def test_run_default_mode(self):
         """
-        Test the run method with display mode.
+        Test the run method with default mode.
 
-        This test case checks if the run method correctly plots the graph when
-        the mode is set to 'display'.
+        This test case checks if the run method correctly calls the plot_graph method
+        with the processed columns when the default mode is specified.
 
-        The test passes if the graph is plotted without any errors.
+        The test passes if the plot_graph method is called with the correct arguments.
         """
-        keywords_list = ['mass', 'energy']
-        self.graph_maker.run(keywords_list, mode='display')
+        columns = ['mass', 'distance', 'time', 'energy', 'velocity']
+        with patch.object(self.graph_maker, 'process_columns', return_value=columns) as mock_process_columns:
+            with patch.object(self.graph_maker, 'plot_graph') as mock_plot_graph:
+                self.graph_maker.run('default')
+                mock_process_columns.assert_called_once()
+                mock_plot_graph.assert_called_once_with(columns)
 
-    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
-    def test_run_interactive_mode(self, mock_interactive_mode):
+        with patch.object(self.graph_maker, 'process_columns', return_value=columns) as mock_process_columns:
+            with patch.object(self.graph_maker, 'plot_graph') as mock_plot_graph:
+                self.graph_maker.run('def')
+                mock_process_columns.assert_called_once()
+                mock_plot_graph.assert_called_once_with(columns)
+        
+        with patch.object(self.graph_maker, 'process_columns', return_value=columns) as mock_process_columns:
+            with patch.object(self.graph_maker, 'plot_graph') as mock_plot_graph:
+                self.graph_maker.run('d')
+                mock_process_columns.assert_called_once()
+                mock_plot_graph.assert_called_once_with(columns)
+
+        with patch.object(self.graph_maker, 'process_columns', return_value=columns) as mock_process_columns:
+            with patch.object(self.graph_maker, 'plot_graph') as mock_plot_graph:
+                self.graph_maker.run('deflt')
+                mock_process_columns.assert_called_once()
+                mock_plot_graph.assert_called_once_with(columns)
+
+    def test_run_interactive_mode(self):
         """
         Test the run method with interactive mode.
 
-        This test case checks if the run method correctly handles the interactive
-        mode operations when the mode is set to 'interactive'.
+        This test case checks if the run method correctly calls the interactive_mode method
+        when the interactive mode is specified.
 
-        The test passes if the run method executes the interactive mode operations
-        without any errors.
+        The test passes if the interactive_mode method is called.
         """
-        keywords_list = ['mass', 'energy']
-        self.graph_maker.run(keywords_list, mode='interactive')
-        self.assertTrue(mock_interactive_mode.called)
+        with patch.object(self.graph_maker, 'interactive_mode') as mock_interactive_mode:
+            self.graph_maker.run('interactive')
+            mock_interactive_mode.assert_called_once()
+            
+        with patch.object(self.graph_maker, 'interactive_mode') as mock_interactive_mode:
+            self.graph_maker.run('int')
+            mock_interactive_mode.assert_called_once()
+
+        with patch.object(self.graph_maker, 'interactive_mode') as mock_interactive_mode:
+            self.graph_maker.run('i')
+            mock_interactive_mode.assert_called_once()
+
+        with patch.object(self.graph_maker, 'interactive_mode') as mock_interactive_mode:
+            self.graph_maker.run('inteactive')
+            mock_interactive_mode.assert_called_once()
+
+    def test_run_invalid_mode(self):
+        """
+        Test the run method with invalid mode.
+
+        This test case checks if the run method raises a ValueError when an invalid mode is specified.
+
+        The test passes if a ValueError is raised.
+        """
+        with self.assertRaises(ValueError):
+            self.graph_maker.run('test')
+
+class Test_GraphMaker_interactive_mode(unittest.TestCase):
+    """
+    Test case for the interactive_mode method of the GraphMaker class.
+    """
+
+    @patch('builtins.input', side_effect=['mass', 'exit'])
+    @patch('builtins.print')
+    def test_interactive_mode_exit(self, mock_print, mock_input):
+        """
+        Test the interactive_mode method when the user types "exit".
+
+        This test case checks if the interactive_mode method exits the program
+        when the user types "exit".
+
+        The test passes if the program exits without any errors.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df)
+
+        graph_maker.interactive_mode()
+
+        mock_print.assert_called_with("""Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.""")
+        mock_input.assert_called_with('Select which quantities to display and how: ')
+
+    @patch('builtins.input', side_effect=['Display [mass, energy]', 'exit'])
+    @patch('builtins.print')
+    @patch.object(GraphMaker, 'plot_graph')
+    def test_interactive_mode_display_mode(self, mock_plot_graph, mock_print, mock_input):
+        """
+        Test the interactive_mode method with Display mode.
+
+        This test case checks if the interactive_mode method calls the plot_graph
+        method with the correct arguments when the user selects Display mode.
+
+        The test passes if the plot_graph method is called with the correct arguments.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df)
+
+        graph_maker.interactive_mode()
+
+        mock_print.assert_called_with('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.')
+        mock_input.assert_called_with('Select which quantities to display and how: ')
+        mock_plot_graph.assert_called_with(['energy'])
+
+    @patch('builtins.input', side_effect=['Combine [mass, energy]', 'exit'])
+    @patch('builtins.print')
+    @patch.object(GraphMaker, 'plot_graph')
+    def test_interactive_mode_combine_mode(self, mock_plot_graph, mock_print, mock_input):
+        """
+        Test the interactive_mode method with Combine mode.
+
+        This test case checks if the interactive_mode method calls the plot_graph
+        method with the correct arguments when the user selects Combine mode.
+
+        The test passes if the plot_graph method is called with the correct arguments.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df)
+
+        graph_maker.interactive_mode()
+
+        mock_print.assert_called_with('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.')
+        mock_input.assert_called_with('Select which quantities to display and how: ')
+        mock_plot_graph.assert_called_with(['mass', 'energy'])
 
 if __name__ == '__main__':
     unittest.main()

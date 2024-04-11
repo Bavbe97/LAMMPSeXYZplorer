@@ -47,27 +47,30 @@ class GraphMaker:
     
     Methods:
         __init__(self, df): Initializes the GraphMaker object.
+        process_columns(self): Processes the DataFrame columns based on the provided keywords list.
+        plot_graph(self, columns, df=None, x=None, y=None): Plots the graph based on the provided columns, xlabel, and ylabel.
+        run(self, keywords_list, mode='display'): Runs the graph maker based on the provided keywords list and mode.
+        interactive_mode(self): Enters the interactive mode for the graph maker.
     """
 
-    def __init__(self, df, keywords_list = None):
-            """
-            Initializes the GraphMaker object.
+    def __init__(self, df, keywords_list=None):
+        """
+        Initializes the GraphMaker object.
 
-            Args:
-                df (pandas.DataFrame): The DataFrame containing data.
-                keywords_list (list, optional): List of keywords. Defaults to None.
+        Args:
+            df (pandas.DataFrame): The DataFrame containing data.
+            keywords_list (list, optional): List of keywords. Defaults to None.
 
-            Raises:
-                ValueError: If df is empty.
+        Raises:
+            ValueError: If df is empty.
 
-            Returns:
-                None
-            """
-            if df.empty:
-                raise ValueError('Data cannot be empty')
-            self.df = df
-
-            self.keywords_list = keywords_list
+        Returns:
+            None
+        """
+        if df.empty:
+            raise ValueError('Data cannot be empty')
+        self.df = df
+        self.keywords_list = keywords_list
 
     def process_columns(self):
         """
@@ -103,31 +106,95 @@ class GraphMaker:
             df = df if df is not None else self.df
             if columns != []:
                 for column in columns:
-                    ax.plot(df['time'], df[column]) # pragma: no cover
+                    ax.plot(df['Time'], df[column]) # pragma: no cover
             else:
                 for column in df.columns:
-                    if column != 'time':
-                        ax.plot(df['time'], df[column]) # pragma: no cover
+                    if column != 'Time':
+                        ax.plot(df['Time'], df[column]) # pragma: no cover
         plt.show() # pragma: no cover
 
-    def run(self, keywords_list, mode = 'display'):
+    def run(self, mode, keywords_list=[]):
         """
-        Runs the graph maker based on the provided keywords list and mode.
+        Run the GraphMaker in the specified mode.
 
-        Args:
-            keywords_list (list): The list of keywords to be processed.
-            mode (str): The mode in which the graph maker should run.
+        Parameters:
+        - mode (str): The mode in which to run the GraphMaker. Valid values are 'd' for default mode and 'i' for interactive mode.
+        - keywords_list (list): Optional list of keywords to filter the data.
+
+        Raises:
+        - ValueError: If an invalid mode is provided.
 
         Returns:
-            None
+        - None
         """
         self.keywords_list = keywords_list
         columns = self.process_columns()
-        if mode == 'display':
+        if mode.lower().startswith('d'):
             self.plot_graph(columns)
-        elif mode == 'interactive':
+        elif mode.lower().startswith('i'):
             self.interactive_mode()
-            pass
-    
+        else:
+            raise ValueError('Invalid mode')
+
     def interactive_mode(self):
-        return
+        """
+        Enters the interactive mode for the graph maker.
+        
+        This method allows the user to interactively plot graphs based on the available data.
+        The user is provided with information on the plottable keywords and can select the quantities to display and how to plot them.
+        The method supports two modes: Display and Combine.
+        In Display mode, multiple figures are displayed with each "Time vs. Quantity" data plotted separately.
+        In Combine mode, a single figure is displayed with all "Time vs. Quantity" data plotted together.
+        The user can exit the program by typing "exit".
+        """
+        # Give user info on plottable keywords
+        print('The following quantities have been found: ' +
+              ', '.join(self.df.columns.astype(str))
+              )
+        
+        # Start plotting loop
+        while True:
+            keyword_check = True
+            # Give info on how to plot
+            print('Define printing settings:')
+            print('Input format: mode [q_name1, q_name2, q_name3]')
+            print('To exit the program type: "exit"')
+            print('Modes')
+            print('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately')
+            print('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.')
+
+            # Obtain input by user
+            graph_input = input('Select which quantities to display and how: ')
+            # Get data from input
+            graph_input= graph_input.replace(' ', '').split('[')
+            # Get plotting mode
+            mode = graph_input[0].lower()
+
+            # Exit the loop
+            if mode == 'exit':
+                break
+
+            # Get keywords to plot
+            try:
+                keywords_list = graph_input[1].replace(']', '').split(',')
+            except:
+                print('Error: Invalid input')
+                continue
+            # Check if input keywords are plottable
+            for keyword in keywords_list:
+                if keyword not in list(self.df.columns):
+                    print('Error: ' + keyword + ' not found')
+                    keyword_check = False
+                    
+            if keyword_check:
+                if mode.lower().startswith('d'):
+                    # Plot using display mode
+                    for keyword in keywords_list:
+                        self.plot_graph([keyword])
+                if mode.lower().startswith('c'):
+                     # Plot using combine mode
+                    self.plot_graph(keywords_list)
+            else:
+                # If input is invalid, restart the loop
+                print('Invalid selection, try again.')
+                continue

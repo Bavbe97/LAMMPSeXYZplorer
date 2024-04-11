@@ -86,3 +86,26 @@ class GraphMaker:
             matching_columns = [keyword for keyword in self.keywords_list if keyword in self.df.columns]
             return matching_columns
 
+    def plot_graph(self, columns, df=None, x=None, y=None):
+        """
+        Plots the graph based on the provided columns, xlabel, and ylabel.
+
+        Args:
+            columns (list): A list containing the column names to be plotted.
+            df (pd.DataFrame, optional): The dataframe containing the data to be plotted. Defaults to self.thermo_df.
+            x (list, optional): The x-values to be plotted. Defaults to None.
+            y (list, optional): The y-values to be plotted. Defaults to None.
+        """
+        fig, ax = plt.subplots()
+        if x is not None and y is not None:
+            ax.plot(x, y) # pragma: no cover
+        else:
+            df = df if df is not None else self.df
+            if columns != []:
+                for column in columns:
+                    ax.plot(df['time'], df[column]) # pragma: no cover
+            else:
+                for column in df.columns:
+                    if column != 'time':
+                        ax.plot(df['time'], df[column]) # pragma: no cover
+        plt.show()

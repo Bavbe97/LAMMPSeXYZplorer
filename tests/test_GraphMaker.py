@@ -137,5 +137,67 @@ class Test_GraphMaker_process_columns(unittest.TestCase):
         expected_columns = ['mass', 'velocity']
         self.assertListEqual(graph_maker.process_columns(), expected_columns)
 
+class Test_GraphMaker_plot_graph(unittest.TestCase):
+    """
+    Test case for the plot_graph method of the GraphMaker class.
+    """
+    
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4 , 5], [2, 4, 6, 8, 10], [3, 6, 9, 12, 15]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        self.test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(self.test_df)
+
+    def test_plot_graph_with_columns(self):
+        """
+        Test the plot_graph method with provided columns.
+
+        This test case checks if the plot_graph method plots the graph correctly
+        when provided with a list of columns.
+
+        The test passes if the graph is plotted without any errors.
+        """
+        columns = ['mass', 'energy']
+        self.graph_maker.plot_graph(columns)
+
+    def test_plot_graph_with_df(self):
+        """
+        Test the plot_graph method with provided dataframe.
+
+        This test case checks if the plot_graph method plots the graph correctly
+        when provided with a dataframe.
+
+        The test passes if the graph is plotted without any errors.
+        """
+        columns = ['mass', 'energy']
+        self.graph_maker.plot_graph(columns, df=self.test_df)
+
+    def test_plot_graph_with_x_y(self):
+        """
+        Test the plot_graph method with provided x and y values.
+
+        This test case checks if the plot_graph method plots the graph correctly
+        when provided with x and y values.
+
+        The test passes if the graph is plotted without any errors.
+        """
+        x = [1, 2, 3, 4, 5]
+        y = [2, 4, 6, 8, 10]
+        self.graph_maker.plot_graph([], x=x, y=y)
+
+    def test_plot_graph_default(self):
+        """
+        Test the plot_graph method with default parameters.
+
+        This test case checks if the plot_graph method plots the graph correctly
+        with default parameters.
+
+        The test passes if the graph is plotted without any errors.
+        """
+        self.graph_maker.plot_graph([])
+
 if __name__ == '__main__':
     unittest.main()

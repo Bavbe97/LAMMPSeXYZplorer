@@ -49,20 +49,40 @@ class GraphMaker:
         __init__(self, df): Initializes the GraphMaker object.
     """
 
-    def __init__(self, df):
+    def __init__(self, df, keywords_list = None):
+            """
+            Initializes the GraphMaker object.
+
+            Args:
+                df (pandas.DataFrame): The DataFrame containing data.
+                keywords_list (list, optional): List of keywords. Defaults to None.
+
+            Raises:
+                ValueError: If df is empty.
+
+            Returns:
+                None
+            """
+            if df.empty:
+                raise ValueError('Data cannot be empty')
+            self.df = df
+
+            self.keywords_list = keywords_list
+
+    def process_columns(self):
         """
-        Initializes the GraphMaker object.
+        Processes the DataFrame columns based on the provided keywords list.
 
         Args:
-            df (pandas.DataFrame): The DataFrame containing data.
-
-        Raises:
-            ValueError: If df is empty.
+            None
 
         Returns:
-            None
+            list: A list containing the column names that match the keywords.
         """
-        if df.empty:
-            raise ValueError('Data cannot be empty')
-        self.df = df
+        # Find the column names that match the keywords
+        if self.keywords_list is None:
+            return self.df.columns.tolist()
+        else:
+            matching_columns = [keyword for keyword in self.keywords_list if keyword in self.df.columns]
+            return matching_columns
 

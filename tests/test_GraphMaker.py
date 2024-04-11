@@ -45,6 +45,97 @@ class Test_GraphMaker_init_(unittest.TestCase):
         test_df = pd.DataFrame(data, columns=keywords)
         with self.assertRaises(ValueError):
             GraphMaker(test_df)
+    
+    def test_init_with_keywords_list(self):
+        """
+        Test the initialization of the GraphMaker class with a keywords list.
+
+        This test case checks if the GraphMaker class is initialized correctly when
+        a keywords list is provided. It compares the keywords_list attribute of the
+        created GraphMaker instance with the provided keywords list.
+
+        The test passes if the keywords_list attribute of the GraphMaker instance is
+        equal to the provided keywords list.
+
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        test_keywords_list = ['mass', 'distance', 'vel']
+        graph_maker = GraphMaker(test_df, keywords_list=test_keywords_list)
+        self.assertEqual(graph_maker.keywords_list, test_keywords_list)
+
+class Test_GraphMaker_process_columns(unittest.TestCase):
+    """
+    Test case for the process_columns method of the GraphMaker class.
+    """
+
+    def test_process_columns_with_keywords(self):
+        """
+        Test the process_columns method with provided keywords.
+
+        This test case checks if the process_columns method returns the expected list
+        of matching column names when provided with a list of keywords.
+
+        The test passes if the returned list of matching column names is equal to the
+        expected list of matching column names.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df, keywords_list=['mass', 'energy', 'velocity'])
+        expected_columns = ['mass', 'energy', 'velocity']
+        self.assertEqual(graph_maker.process_columns(), expected_columns)
+
+    def test_process_columns_without_keywords(self):
+        """
+        Test the process_columns method without provided keywords.
+
+        This test case checks if the process_columns method returns all the column names
+        when no keywords are provided.
+
+        The test passes if the returned list of column names is equal to the list of all
+        column names in the DataFrame.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df)
+        expected_columns = keywords
+        self.assertListEqual(graph_maker.process_columns(), expected_columns)
+
+    def test_process_columns_no_matches(self):
+        """
+        Test the process_columns method with no matching columns.
+
+        This test case checks if the process_columns method returns an empty list when
+        no columns match the provided keywords.
+
+        The test passes if the returned list of matching column names is empty.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df, keywords_list=['force', 'pressure', 'temperature'])
+        expected_columns = []
+        self.assertListEqual(graph_maker.process_columns(), expected_columns)
+
+    def test_process_columns_partially_matches(self):
+        """
+        Test the process_columns method with partial matches.
+
+        This test case checks if the process_columns method returns the list of
+        column names that partially match the provided keywords.
+
+        The test passes if the returned list of matching column names contains
+        the columns that partially match the provided keywords.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df, keywords_list=['mass', 'force', 'velocity'])
+        expected_columns = ['mass', 'velocity']
+        self.assertListEqual(graph_maker.process_columns(), expected_columns)
 
 if __name__ == '__main__':
     unittest.main()

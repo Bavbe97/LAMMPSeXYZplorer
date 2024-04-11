@@ -7,6 +7,7 @@ Created on Sun Jan 21 16:18:27 2024
 
 import lammpshade as ls
 
-prova = ls.Simulation('./examples/input_example.yaml')
-thermo_data = prova.get_thermodata()
-prova.make_graphs(interact = True)
+sim = ls.Simulation('./examples/input_example.yaml')
+sim.convert_to_xyz('./examples/xyz_example.xyz')
+thermo = sim.get_thermodata()
+sim.make_graphs(mode = 'interactive')

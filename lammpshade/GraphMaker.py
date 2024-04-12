@@ -172,13 +172,14 @@ class GraphMaker:
 
             # Exit the loop
             if mode == 'exit':
+                print('Exiting the loop...')
                 break
 
             # Get keywords to plot
             try:
                 keywords_list = graph_input[1].replace(']', '').split(',')
             except:
-                print('Error: Invalid input')
+                print('Invalid selection, try again.')
                 continue
             # Check if input keywords are plottable
             for keyword in keywords_list:

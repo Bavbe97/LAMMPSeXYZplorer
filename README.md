@@ -1,31 +1,34 @@
 ![Unit Tests](https://github.com/Bavbe97/LAMMPShade/actions/workflows/unit_test.yml/badge.svg)
 # LAMMPShade
-LAMMPShade aims to be a toolkit for working with LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) simulations.
-It's an open source library designed to collect useful functions to analyze and convert OUTPUT files and (possibly in the future) generate INPUT files in a fast and efficient way.
-In its current state LAMMPShade is able to read YAML-like output, convert them in XYZ files for third-party visualization softwares and create preliminary plots to analyze the data from each step of a LAMMPS molecular dynamics simulation.
 
-## How to install
-You can download the repo and use it as a simple Python package.
-Testing and evaluation of more modules is still considered, once it is done the package will be uploaded to pypi.
+LAMMPShade is a toolkit for working with LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator) simulations. It is an open-source library designed to collect useful functions to analyze and convert OUTPUT files and, potentially in the future, generate INPUT files in a fast and efficient way.
+
+In its current state, LAMMPShade is capable of reading YAML-like output, converting them into XYZ files for third-party visualization software, and creating preliminary plots to analyze the data from each step of a LAMMPS molecular dynamics simulation.
+
+## How to Install
+
+To use LAMMPShade, you can download the repository and use it as a simple Python package. Testing and evaluation of more modules are still ongoing, and once completed, the package will be uploaded to PyPI for easier installation.
 
 ## Dependencies
-LAMMPShade is tested and working in Python `3.11`.
-Functionality with older versions is not assured, but will be tested.
 
-LAMMPShade relies on the following dependencies:
-- `pandas`
-- `matplotlib`
+LAMMPShade is tested and working with Python `3.7`, `3.8`, `3.9`, `3.10`, `3.11` and `3.12`. Functionality with older versions is not guaranteed.
 
-Be sure to have them properly installed beforehand.
+LAMMPShade relies on the following dependencies, which should be properly installed beforehand:
+
+- `pandas` (tested for version `2.2`)
+- `matplotlib` (tested for version `3.8`)
 
 ## Wiki
-Work in progress
+
+The project's wiki is a work in progress and will be updated with more information and documentation.
 
 ## Contributing
-The project is open to contributions and suggestiong, you can freely open an issue or directly contact me.
 
-## External links
-Some links with useful informations
+The project is open to contributions and suggestions. If you have any ideas or encounter any issues, feel free to open an issue or contact the project maintainer.
+
+## External Links
+
+Here are some external links with useful information:
 
 - [LAMMPS webpage](https://www.lammps.org/)
 - [pandas](https://pandas.pydata.org/)

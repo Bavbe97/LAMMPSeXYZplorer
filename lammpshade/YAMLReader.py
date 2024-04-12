@@ -1,5 +1,6 @@
 """
-This module provides a class for reading YAML-formatted files and extracting data.
+This module provides a class for reading YAML-formatted files and extracting
+data.
 
 Module Attributes:
 - None
@@ -7,6 +8,7 @@ Module Attributes:
 Classes:
 - YAMLReader: A class to read YAML-formatted files and extract data.
 """
+
 
 class YAMLReader:
     """
@@ -23,7 +25,8 @@ class YAMLReader:
         Initializes a YAMLReader object.
 
         Parameters:
-        - filename (str, optional): The path to the YAML file. Defaults to None.
+        - filename (str, optional): The path to the YAML file. Defaults to
+                                    None.
 
         Raises:
         - FileNotFoundError: If the specified file is not found.
@@ -37,16 +40,25 @@ class YAMLReader:
 
     def convert_value(self, value):
         """
-        Converts a string variable to an INT, FLOAT, or LIST based on its content.
+        Converts a string variable to an INT, FLOAT, or LIST based on its
+            content.
 
         Parameters:
         - value (str): String that needs to be converted.
 
         Returns:
-        - int(value) (int): If the content of the string contains only digits, it's converted to an integer.
-        - float(value) (float): If the string contains a dot ('.') and the content is in a valid floating-point format, it's converted to a float.
-        - converted_elements (list): If the string starts and ends with square brackets ('[', ']'), it's converted to a list of elements. Elements in the list are converted to integers, floats, or remain as strings based on their content.
-        - value (str): If the content doesn't match any of the conversion criteria, the original string is returned unchanged.
+        - int(value) (int): If the content of the string contains only digits,
+                            it's converted to an integer.
+        - float(value) (float): If the string contains a dot ('.') and the
+                                content is in a valid floating-point format,
+                                it's converted to a float.
+        - converted_elements (list): If the string starts and ends with square
+                                     brackets ('[', ']'), it's converted to a
+                                     list of elements. Elements in the list
+                                     are converted to integers, floats, or
+                                     remain as strings based on their content.
+        - value (str): If the content doesn't match any of the conversion
+                       criteria, the original string is returned unchanged.
         """
         # Assure right formatting of the value
         value = value.strip()
@@ -70,7 +82,8 @@ class YAMLReader:
             converted_elements = []
             # Try to convert the elements
             for elem in elements:
-                if elem.isdigit() or (elem.startswith('-') and elem[1:].isdigit()):
+                if elem.isdigit() or (elem.startswith('-') and
+                                      elem[1:].isdigit()):
                     converted_elements.append(int(elem))
                 elif '.' in elem:
                     try:
@@ -128,7 +141,6 @@ class YAMLReader:
                     while data_reading:
                         if not line or line.startswith('...'):
                             # Return function if the step ends abruptly
-                            step_reading = False
                             self.current_step = step
                             return step
                         elif '-' in line and ':' not in line:
@@ -140,7 +152,8 @@ class YAMLReader:
                             line = self.file.readline()
                         elif '-' in line and ':' in line:
                             # Get dictionary
-                            d_key = line.replace(' ', '').split(':')[0].replace('-', '')
+                            d_key = line.replace(' ', '').split(':')[0]
+                            d_key = d_key.replace('-', '')
                             d_value = line.split(':')[1]
                             d_value = self.convert_value(d_value)
                             data_dic[d_key] = d_value

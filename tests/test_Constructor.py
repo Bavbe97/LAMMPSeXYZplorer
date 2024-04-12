@@ -15,12 +15,27 @@ class Test_Simulation_init_(unittest.TestCase):
         THEN it should raise a FileNotFoundError"""
         with self.assertRaises(FileNotFoundError):
             Simulation('test.yaml')
-    
+
     def test_file_exists_Simulation(self):
-        """GIVEN a file that exists
-        WHEN creating a Simulation object with the file
-        THEN it should create a Simulation object with the specified file path
-        AND the thermo_keywords, thermo_data, and graphs attributes should be None"""
+        """
+        Test case to verify the behavior of creating a Simulation object with
+            an existing file.
+
+        This test case checks whether a Simulation object is created with the
+            specified file path.
+        It also verifies that the `thermo_keywords`, `thermo_data`, and
+            `graphs` attributes
+        of the Simulation object are set to None.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Assert that the `file` attribute of the Simulation object is an
+            instance of YAMLReader.
+        3. Assert that the `thermo_keywords` attribute of the Simulation
+            object is None.
+        4. Assert that the `thermo_data` attribute of the Simulation object is
+            None.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         self.assertIsInstance(test.file, YAMLReader)
         self.assertIsNone(test.thermo_keywords)
@@ -44,33 +59,68 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         os.remove(output_path)
 
     def test_convert_to_xyz_writes_data(self):
-        """GIVEN a Simulation object with thermo data and an output file path
+        """
+        Test case for the convert_to_xyz method of the Simulation class.
+
+        GIVEN a Simulation object with thermo data and an output file path
         WHEN calling the convert_to_xyz method
         THEN it should create a file at the specified output file path
         AND the content of the file should match the expected data
-        AND the thermo_keywords and thermo_data attributes of the Simulation object should match the expected data"""
-        check_thermo_keywords = ['Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol', 'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup', 'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown', 'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol', 'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown']
-        check_thermo_data = [[0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255, -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187, -185.57297268783822, -77.10842905082524, 110.31226354857071, -140.2899523838907, 3.039668789182617, -5.06330135256117, 9.727313720915875, -3.1389946536884497e-05, -2.6631405961489187e-05],
-                             [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367, -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033, -233.9726040510098, -42.210472839826075, 124.79690543736122, -122.74328293645766, 3.1868325247141094, -4.298221898942454, 9.276458616821385, -3.0941717500759274e-05, -2.9443466037842702e-05],
-                             [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196, -2.909264466469331e-06, -448.1659845051213, -386.817432548582, -269.80336944302906, -13.071858320137883, 128.84158150708203, -146.7292159255793, 3.121817604281661, -3.4342165171789922, 7.389085572389913, -2.97666226668858e-05, -3.2073229796614527e-05]
-                             ]
+        AND the thermo_keywords and thermo_data attributes of the Simulation
+            object should match the expected data
+        """
+        check_thermo_keywords = [
+            'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
+            'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup',
+            'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown',
+            'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol',
+            'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown'
+        ]
+        check_thermo_data = [
+            [0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255,
+             -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187,
+             -185.57297268783822, -77.10842905082524, 110.31226354857071,
+             -140.2899523838907, 3.039668789182617, -5.06330135256117,
+             9.727313720915875, -3.1389946536884497e-05,
+             -2.6631405961489187e-05],
+            [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367,
+             -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033,
+             -233.9726040510098, -42.210472839826075, 124.79690543736122,
+             -122.74328293645766, 3.1868325247141094, -4.298221898942454,
+             9.276458616821385, -3.0941717500759274e-05,
+             -2.9443466037842702e-05],
+            [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196,
+             -2.909264466469331e-06, -448.1659845051213, -386.817432548582,
+             -269.80336944302906, -13.071858320137883, 128.84158150708203,
+             -146.7292159255793, 3.121817604281661, -3.4342165171789922,
+             7.389085572389913, -2.97666226668858e-05,
+             -3.2073229796614527e-05]
+        ]
         test = Simulation(os.path.join('tests', 'test.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
         test.convert_to_xyz(output_path)
         with open(output_path, 'r') as f:
-            with open(os.path.join(os.getcwd(), 'tests', 'test_check.xyz'), 'r') as check:
+            with open(os.path.join(
+                    os.getcwd(), 'tests', 'test_check.xyz'), 'r') as check:
                 self.assertEqual(f.read(), check.read())
         self.assertEqual(test.thermo_keywords, check_thermo_keywords)
-        for i, (data1, data2) in enumerate(zip(test.thermo_data, check_thermo_data)):
-            for j, value1 in enumerate(data1):
-                self.assertEqual(value1, data2[j])
+        for data1, data2 in zip(test.thermo_data, check_thermo_data):
+            for value1, value2 in zip(data1, data2):
+                self.assertEqual(value1, value2)
         os.remove(output_path)
 
-    def test_convert_to_xyz_no_thermo_data(self):
-        """GIVEN a Simulation object without thermo data and an output file path
+    @patch('builtins.print')
+    def test_convert_to_xyz_no_thermo_data(self, mock_print):
+        """
+        Test case for the convert_to_xyz method when there is no thermo data.
+
+        GIVEN a Simulation object without thermo data and an output file path
         WHEN calling the convert_to_xyz method
         THEN it should create a file at the specified output file path
-        AND the thermo_keywords and thermo_data attributes of the Simulation object should be None"""
+        AND the thermo_keywords and thermo_data attributes of the Simulation
+            object should be None
+        """
+
         test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
         test.convert_to_xyz(output_path)
@@ -78,23 +128,51 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         self.assertIsNone(test.thermo_data)
         os.remove(output_path)
 
+
 class Test_Simulation_get_thermodata(unittest.TestCase):
     """Tests the get_thermodata method of Simulation"""
 
     def test_get_thermodata(self):
-        """GIVEN a Simulation object with thermo data
+        """
+        GIVEN a Simulation object with thermo data
         WHEN calling the get_thermodata method
         THEN it should return the thermo data as a pandas DataFrame
-        AND the thermo_keywords attribute of the Simulation object should match the expected data"""
-        check_thermo_keywords = ['Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol', 'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup', 'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown', 'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol', 'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown']
-        check_thermo_data = [[0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255, -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187, -185.57297268783822, -77.10842905082524, 110.31226354857071, -140.2899523838907, 3.039668789182617, -5.06330135256117, 9.727313720915875, -3.1389946536884497e-05, -2.6631405961489187e-05],
-                             [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367, -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033, -233.9726040510098, -42.210472839826075, 124.79690543736122, -122.74328293645766, 3.1868325247141094, -4.298221898942454, 9.276458616821385, -3.0941717500759274e-05, -2.9443466037842702e-05],
-                             [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196, -2.909264466469331e-06, -448.1659845051213, -386.817432548582, -269.80336944302906, -13.071858320137883, 128.84158150708203, -146.7292159255793, 3.121817604281661, -3.4342165171789922, 7.389085572389913, -2.97666226668858e-05, -3.2073229796614527e-05]
-                             ]
+        AND the thermo_keywords attribute of the Simulation object should
+            match the expected data
+        """
+        check_thermo_keywords = [
+            'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
+            'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup',
+            'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown',
+            'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol',
+            'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown'
+        ]
+        check_thermo_data = [
+            [0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255,
+             -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187,
+             -185.57297268783822, -77.10842905082524, 110.31226354857071,
+             -140.2899523838907, 3.039668789182617, -5.06330135256117,
+             9.727313720915875, -3.1389946536884497e-05,
+             -2.6631405961489187e-05],
+            [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367,
+             -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033,
+             -233.9726040510098, -42.210472839826075, 124.79690543736122,
+             -122.74328293645766, 3.1868325247141094, -4.298221898942454,
+             9.276458616821385, -3.0941717500759274e-05,
+             -2.9443466037842702e-05],
+            [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196,
+             -2.909264466469331e-06, -448.1659845051213, -386.817432548582,
+             -269.80336944302906, -13.071858320137883, 128.84158150708203,
+             -146.7292159255793, 3.121817604281661, -3.4342165171789922,
+             7.389085572389913, -2.97666226668858e-05,
+             -3.2073229796614527e-05]
+        ]
         test = Simulation(os.path.join('tests', 'test.yaml'))
         thermo_data = test.get_thermodata()
         self.assertEqual(test.thermo_keywords, check_thermo_keywords)
-        for i, (data1, data2) in enumerate(zip(thermo_data.values.tolist(), check_thermo_data)):
+        for i, (data1, data2) in enumerate(
+            zip(thermo_data.values.tolist(), check_thermo_data)
+        ):
             for j, value1 in enumerate(data1):
                 self.assertAlmostEqual(value1, data2[j], 10)
 
@@ -106,31 +184,76 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
         thermo_data = test.get_thermodata()
         self.assertIsNone(thermo_data)
 
-    def test_get_thermodata_no_thermodata(self):
-        """GIVEN a Simulation object without thermo data
-        WHEN calling the get_thermodata method
-        THEN it should return None"""
+    @patch('builtins.print')
+    def test_get_thermodata_no_thermo_data(self, mock_print):
+        """
+        Test case for the get_thermodata method when no thermo data is present.
+
+        This test case verifies the behavior of the get_thermodata method when
+            there is no thermo data present in the file.
+        It creates a Simulation object with an empty file and calls the
+            get_thermodata method.
+        The expected behavior is that the method should return None.
+
+        Steps:
+        1. Create a Simulation object with a file without thermo data.
+        2. Call the get_thermodata method.
+        3. Verify that the mock_print function is called once with the message
+            'No thermo data found in the file'.
+        4. Verify that the returned thermo_data is None.
+        """
         test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
+
         thermo_data = test.get_thermodata()
+
+        mock_print.assert_called_once_with('No thermo data found in the file')
         self.assertIsNone(thermo_data)
 
     def test_get_thermodata_file_already_read(self):
-        """GIVEN a Simulation object with thermo data
+        """
+        GIVEN a Simulation object with thermo data
         WHEN calling the get_thermodata method multiple times
         THEN it should return the same thermo data each time
-        AND the thermo_keywords attribute of the Simulation object should match the expected data"""
-        check_thermo_keywords = ['Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol', 'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup', 'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown', 'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol', 'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown']
-        check_thermo_data = [[0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255, -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187, -185.57297268783822, -77.10842905082524, 110.31226354857071, -140.2899523838907, 3.039668789182617, -5.06330135256117, 9.727313720915875, -3.1389946536884497e-05, -2.6631405961489187e-05],
-                             [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367, -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033, -233.9726040510098, -42.210472839826075, 124.79690543736122, -122.74328293645766, 3.1868325247141094, -4.298221898942454, 9.276458616821385, -3.0941717500759274e-05, -2.9443466037842702e-05],
-                             [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196, -2.909264466469331e-06, -448.1659845051213, -386.817432548582, -269.80336944302906, -13.071858320137883, 128.84158150708203, -146.7292159255793, 3.121817604281661, -3.4342165171789922, 7.389085572389913, -2.97666226668858e-05, -3.2073229796614527e-05]
-                             ]
+        AND the thermo_keywords attribute of the Simulation object should
+            match the expected data
+        """
+        check_thermo_keywords = [
+            'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
+            'v_vcmy_glicerol', 'v_fcmx_diamup', 'v_fcmy_diamup',
+            'v_fcmz_diamup', 'v_fcmx_diamdown', 'v_fcmy_diamdown',
+            'v_fcmz_diamdown', 'v_fcmx_glicerol', 'v_fcmy_glicerol',
+            'v_fcmz_glicerol', 'v_vcmy_diamup', 'v_vcmy_diamdown'
+        ]
+        check_thermo_data = [
+            [0, 0, 300.01337588855796, 301.4826602779623, 300.1499508622255,
+             -2.8275435877824317e-06, -464.33419637917154, -263.0585406099187,
+             -185.57297268783822, -77.10842905082524, 110.31226354857071,
+             -140.2899523838907, 3.039668789182617, -5.06330135256117,
+             9.727313720915875, -3.1389946536884497e-05,
+             -2.6631405961489187e-05],
+            [20, 1, 302.9835046598682, 301.87444362488395, 302.26813661366367,
+             -2.8724272136338264e-06, -453.99482598635586, -326.24381431508033,
+             -233.9726040510098, -42.210472839826075, 124.79690543736122,
+             -122.74328293645766, 3.1868325247141094, -4.298221898942454,
+             9.276458616821385, -3.0941717500759274e-05,
+             -2.9443466037842702e-05],
+            [40, 2, 302.8243689252428, 301.38668254523503, 304.22376702756196,
+             -2.909264466469331e-06, -448.1659845051213, -386.817432548582,
+             -269.80336944302906, -13.071858320137883, 128.84158150708203,
+             -146.7292159255793, 3.121817604281661, -3.4342165171789922,
+             7.389085572389913, -2.97666226668858e-05,
+             -3.2073229796614527e-05]
+        ]
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.get_thermodata()
         thermo_data = test.get_thermodata()
         self.assertEqual(test.thermo_keywords, check_thermo_keywords)
-        for i, (data1, data2) in enumerate(zip(thermo_data.values.tolist(), check_thermo_data)):
+        for i, (data1, data2) in enumerate(
+            zip(thermo_data.values.tolist(), check_thermo_data)
+        ):
             for j, value1 in enumerate(data1):
                 self.assertAlmostEqual(value1, data2[j], 10)
+
 
 class Test_Simulation_make_graphs(unittest.TestCase):
     """Tests the make_graphs method of Simulation"""
@@ -156,7 +279,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         test.make_graphs(mode='d')
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_plot_graph.assert_called_once()
-    
+
     @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode_spelling_error(self, mock_plot_graph):
         """GIVEN a Simulation object
@@ -178,7 +301,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         test.make_graphs(mode='interactive')
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_interactive_mode.assert_called_once()
-    
+
     @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_intial(self, mock_interactive_mode):
         """GIVEN a Simulation object
@@ -189,9 +312,11 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         test.make_graphs(mode='i')
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_interactive_mode.assert_called_once()
-    
+
     @patch.object(GraphMaker, 'interactive_mode')
-    def test_make_graphs_interactive_spelling_error(self, mock_interactive_mode):
+    def test_make_graphs_interactive_spelling_error(
+        self, mock_interactive_mode
+    ):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='intactive'
         THEN it should create an instance of the GraphMaker class
@@ -208,8 +333,6 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         test = Simulation(os.path.join('tests', 'test.yaml'))
         with self.assertRaises(ValueError):
             test.make_graphs(mode='test')
-
-
 
 
 if __name__ == '__main__':

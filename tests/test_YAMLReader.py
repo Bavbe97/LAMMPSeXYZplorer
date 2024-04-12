@@ -14,10 +14,11 @@ class Test_YAMLReader_init_(unittest.TestCase):
         WHEN: Instantiating the YAMLReader class with the non-existent filename
         THEN: It should raise a FileNotFoundError
         """
-        
+
         with self.assertRaises(FileNotFoundError):
             # Instantiate the YAMLReader class with a non-existent filename
             YAMLReader("non_existent_file.yaml")
+
 
 class Test_YAMLReader_convert_value(unittest.TestCase):
     """
@@ -29,12 +30,11 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
         WHEN: Calling the convert_value method with the integer string
         THEN: It should return the corresponding integer value
         """
-        
+
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with an integer string
         assert yaml_reader.convert_value("123") == 123
         assert yaml_reader.convert_value("-123") == -123
-
 
     def test_convert_value_float(self):
         """
@@ -51,7 +51,6 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
         assert yaml_reader.convert_value("-3.14e-2") == -3.14e-2
         assert yaml_reader.convert_value("3.14e2") == 3.14e2
 
-
     def test_convert_value_list_integers(self):
         """
         GIVEN: A list of integer strings
@@ -63,7 +62,6 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
         # Call the convert_value method with a list of integer strings
         assert yaml_reader.convert_value("[1, 2, 3]") == [1, 2, 3]
 
-
     def test_convert_value_list_strings(self):
         """
         GIVEN: A list of string strings
@@ -73,19 +71,22 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a list of string strings
-        assert yaml_reader.convert_value("[hello, world.]") == ['hello', 'world.']
-
+        assert yaml_reader.convert_value("[hello, world.]") == ['hello',
+                                                                'world.']
 
     def test_convert_value_list_mixed(self):
         """
         GIVEN: A list of mixed type strings
-        WHEN: Calling the convert_value method with the list of mixed type strings
+        WHEN: Calling the convert_value method with the list of mixed type
+              strings
         THEN: It should return a list of corresponding mixed type values
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
         # Call the convert_value method with a list of mixed type strings
-        assert yaml_reader.convert_value("[1, 2.5, hello]") == [1, 2.5, 'hello']
+        assert yaml_reader.convert_value("[1, 2.5, hello]") == [1, 2.5,
+                                                                'hello']
+
 
 class Test_YAMLReader_get_next_step(unittest.TestCase):
     """
@@ -95,7 +96,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         """
         GIVEN: A YAML file with subsequent key-value pairs
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs from the YAML file
+        THEN: It should return the subsequent key-value pairs from the YAML
+              file
         """
 
         # Define YAML content to simulate reading from a file
@@ -105,7 +107,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -116,15 +119,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             # Assert the expected behaviour
             assert step['natoms'] == 10
             assert step['units'] == 'real'
-            # Verify that the close method of the mock file object is called exactly once
+            # Verify that the close method of the mock file object is called
+            # exactly once
             mock_file.close.assert_called_once()
-
 
     def test_get_next_step_key_value_then_key_dictionaries(self):
         """
-        GIVEN: A YAML file with subsequent key-value pairs and then a key-dictionary pair
+        GIVEN: A YAML file with subsequent key-value pairs and then a
+               key-dictionary pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs and then the key-dictionary pair from the YAML file
+        THEN: It should return the subsequent key-value pairs and then the
+              key-dictionary pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -136,9 +141,10 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
-        
+
         # Patch the open function to return the mock file object
         with patch('builtins.open', return_value=mock_file):
             yaml_reader = YAMLReader("test_filename.yaml")
@@ -148,15 +154,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             assert step['natoms'] == 10
             assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity']
             assert step['thermo']['data'] == [0, 0, 300.01337588855796]
-            # Verify that the close method of the mock file object is called exactly once
+            # Verify that the close method of the mock file object is called
+            # exactly once
             mock_file.close.assert_called_once()
-
 
     def test_get_next_step_key_value_then_key_lists(self):
         """
-        GIVEN: A YAML file with subsequent key-value pairs and then a key-list pair
+        GIVEN: A YAML file with subsequent key-value pairs and then a key-list
+               pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs and then the key-list pair from the YAML file
+        THEN: It should return the subsequent key-value pairs and then the
+              key-list pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -169,7 +177,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -180,15 +189,16 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             # Assert the expected behaviour
             assert step['natoms'] == 10
             assert step['box'] == [[0, 53],
-                                [0, 52.57],
-                                [0.439, 96.33]]
-
+                                   [0, 52.57],
+                                   [0.439, 96.33]]
 
     def test_get_next_step_key_dictionaries_then_key_lists(self):
         """
-        GIVEN: A YAML file with subsequent key-dictionary pairs and then a key-list pair
+        GIVEN: A YAML file with subsequent key-dictionary pairs and then a
+               key-list pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-dictionary pairs and then the key-list pair from the YAML file
+        THEN: It should return the subsequent key-dictionary pairs and then
+              the key-list pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -203,7 +213,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -215,9 +226,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity']
             assert step['thermo']['data'] == [0, 0, 300.01337588855796]
             assert step['box'] == [[0, 53],
-                                [0, 52.57],
-                                [0.439, 96.33]]
-
+                                   [0, 52.57],
+                                   [0.439, 96.33]]
 
     def test_get_next_step_file_ends(self):
         """
@@ -230,7 +240,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         yaml_content = '''...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -241,16 +252,18 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             # Assert the expected behaviour
             assert step == {}
             step = yaml_reader.get_next_step()
-            
-            # Verify that the close method of the mock file object is called exactly once
-            mock_file.close.assert_called_once()
 
+            # Verify that the close method of the mock file object is called
+            # exactly once
+            mock_file.close.assert_called_once()
 
     def test_get_next_step_key_lists_then_key_dictionaries(self):
         """
-        GIVEN: A YAML file with subsequent key-list pairs and then a key-dictionary pair
+        GIVEN: A YAML file with subsequent key-list pairs and then a
+               key-dictionary pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-list pairs and then the key-dictionary pair from the YAML file
+        THEN: It should return the subsequent key-list pairs and then the
+              key-dictionary pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -265,7 +278,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -275,19 +289,21 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             step = yaml_reader.get_next_step()
             # Assert the expected behaviour
             assert step['box'] == [[0, 53],
-                                [0, 52.57],
-                                [0.439, 96.33]]
+                                   [0, 52.57],
+                                   [0.439, 96.33]]
             assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity']
             assert step['thermo']['data'] == [0, 0, 300.01337588855796]
 
-
     def test_get_next_step_key_dictionaries_then_key_value(self):
         """
-        Test that the get_next_step method returns subsequent key-dictionary pairs and then a key-value pair from the YAML file.
+        Test that the get_next_step method returns subsequent key-dictionary
+        pairs and then a key-value pair from the YAML file.
 
-        GIVEN: A YAML file with subsequent key-dictionary pairs and then a key-value pair
+        GIVEN: A YAML file with subsequent key-dictionary pairs and then a
+               key-value pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-dictionary pairs and then the key-value pair from the YAML file
+        THEN: It should return the subsequent key-dictionary pairs and then
+              the key-value pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -299,7 +315,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -308,20 +325,25 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             # Call the get_next_step method
             step = yaml_reader.get_next_step()
             # Assert the expected behaviour
-            assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity', 'Negative', 'Exponential']
-            assert step['thermo']['data'] == [0, 0, 300.01337588855796, -26, -6.5e-3]
+            assert step['thermo']['keywords'] == ['Step', 'Time', 'Quantity',
+                                                  'Negative', 'Exponential']
+            assert step['thermo']['data'] == [0, 0, 300.01337588855796, -26,
+                                              -6.5e-3]
             assert step['natoms'] == 10
-            # Verify that the close method of the mock file object is called exactly once
+            # Verify that the close method of the mock file object is called
+            # exactly once
             mock_file.close.assert_called_once()
-
 
     def test_get_next_step_key_lists_then_key_value(self):
         """
-        Test that the get_next_step method returns subsequent key-list pairs and then a key-value pair from the YAML file.
+        Test that the get_next_step method returns subsequent key-list pairs
+        and then a key-value pair from the YAML file.
 
-        GIVEN: A YAML file with subsequent key-list pairs and then a key-value pair
+        GIVEN: A YAML file with subsequent key-list pairs and then a key-value
+               pair
         WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-list pairs and then the key-value pair from the YAML file
+        THEN: It should return the subsequent key-list pairs and then the
+              key-value pair from the YAML file
         """
 
         # Define YAML content to simulate reading from a file
@@ -334,7 +356,8 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         ...'''
         # Create a mock file object
         mock_file = MagicMock()
-        # Configure the readline method of the mock file to return lines of YAML content
+        # Configure the readline method of the mock file to return lines of
+        # YAML content
         mock_file.readline.side_effect = yaml_content.splitlines(True) + ['']
 
         # Patch the open function to return the mock file object
@@ -344,10 +367,9 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             step = yaml_reader.get_next_step()
             # Assert the expected behaviour
             assert step['box'] == [[0, 53],
-                                [0, 52.57],
-                                [0.439, 96.33]]
+                                   [0, 52.57],
+                                   [0.439, 96.33]]
             assert step['natoms'] == 10
-
 
     def test_get_next_step_get_subsequent_step(self):
         """
@@ -355,7 +377,7 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
         WHEN: Calling the get_next_step method multiple times
         THEN: It should return the subsequent steps from the YAML file
         """
-        
+
         # Define YAML lines to simulate reading from a file
         yaml_lines = [
             "---",
@@ -369,19 +391,19 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             "  - [ 0.439, 96.33 ]",
             "..."
         ]
-        
+
         # Create a mock file object
         mock_file = mock_open(read_data='\n'.join(yaml_lines))
-        
+
         # Patch the open function to return the mock file object
         with patch('builtins.open', mock_file):
             # Instantiate the YAMLReader class with a fake filename
             yaml_reader = YAMLReader("fake_filename.yaml")
-            
+
             # Call the get_next_step method until '...' is encountered
             step = yaml_reader.get_next_step()
             step = yaml_reader.get_next_step()
-            
+
             # Assert the expected behavior
             assert 'natoms' not in step
             assert step['creator'] == 'LAMMPS'

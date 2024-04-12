@@ -17,3 +17,4 @@ del _hard_dependencies, _dependency, _missing_dependencies
 from lammpshade.YAMLReader import *
 from lammpshade.XYZWriter import *
 from lammpshade.Constructor import *
+from lammpshade.GraphMaker import *

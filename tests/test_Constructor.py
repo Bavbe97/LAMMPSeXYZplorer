@@ -135,7 +135,7 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
 class Test_Simulation_make_graphs(unittest.TestCase):
     """Tests the make_graphs method of Simulation"""
 
-    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode(self, mock_plot_graph):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='display'
@@ -146,7 +146,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_plot_graph.assert_called_once()
 
-    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode_intial(self, mock_plot_graph):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='d'
@@ -157,7 +157,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_plot_graph.assert_called_once()
     
-    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode_spelling_error(self, mock_plot_graph):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='dispay'
@@ -168,7 +168,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_plot_graph.assert_called_once()
 
-    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_mode(self, mock_interactive_mode):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='interactive'
@@ -179,7 +179,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_interactive_mode.assert_called_once()
     
-    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_intial(self, mock_interactive_mode):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='i'
@@ -190,7 +190,7 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         self.assertIsInstance(test.graphs, GraphMaker)
         mock_interactive_mode.assert_called_once()
     
-    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_spelling_error(self, mock_interactive_mode):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='intactive'

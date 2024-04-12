@@ -135,7 +135,8 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
 class Test_Simulation_make_graphs(unittest.TestCase):
     """Tests the make_graphs method of Simulation"""
 
-    def test_make_graphs_display_mode(self):
+    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    def test_make_graphs_display_mode(self, mock_plot_graph):
         """GIVEN a Simulation object
         WHEN calling the make_graphs method with mode='display'
         THEN it should create an instance of the GraphMaker class
@@ -143,6 +144,70 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='display')
         self.assertIsInstance(test.graphs, GraphMaker)
+        mock_plot_graph.assert_called_once()
+
+    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    def test_make_graphs_display_mode_intial(self, mock_plot_graph):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with mode='d'
+        THEN it should create an instance of the GraphMaker class
+        AND run the graphs in display mode"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        test.make_graphs(mode='d')
+        self.assertIsInstance(test.graphs, GraphMaker)
+        mock_plot_graph.assert_called_once()
+    
+    @patch('lammpshade.GraphMaker.GraphMaker.plot_graph')
+    def test_make_graphs_display_mode_spelling_error(self, mock_plot_graph):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with mode='dispay'
+        THEN it should create an instance of the GraphMaker class
+        AND run the graphs in display mode"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        test.make_graphs(mode='dispay')
+        self.assertIsInstance(test.graphs, GraphMaker)
+        mock_plot_graph.assert_called_once()
+
+    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    def test_make_graphs_interactive_mode(self, mock_interactive_mode):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with mode='interactive'
+        THEN it should create an instance of the GraphMaker class
+        AND run the graphs in interactive mode"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        test.make_graphs(mode='interactive')
+        self.assertIsInstance(test.graphs, GraphMaker)
+        mock_interactive_mode.assert_called_once()
+    
+    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    def test_make_graphs_interactive_intial(self, mock_interactive_mode):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with mode='i'
+        THEN it should create an instance of the GraphMaker class
+        AND run the graphs in interactive mode"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        test.make_graphs(mode='i')
+        self.assertIsInstance(test.graphs, GraphMaker)
+        mock_interactive_mode.assert_called_once()
+    
+    @patch('lammpshade.GraphMaker.GraphMaker.interactive_mode')
+    def test_make_graphs_interactive_spelling_error(self, mock_interactive_mode):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with mode='intactive'
+        THEN it should create an instance of the GraphMaker class
+        AND run the graphs in interactive mode"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        test.make_graphs(mode='intactive')
+        self.assertIsInstance(test.graphs, GraphMaker)
+        mock_interactive_mode.assert_called_once()
+
+    def test_make_graphs_ValueError(self):
+        """GIVEN a Simulation object
+        WHEN calling the make_graphs method with an invalid mode
+        THEN it should raise a ValueError"""
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        with self.assertRaises(ValueError):
+            test.make_graphs(mode='test')
 
 
 

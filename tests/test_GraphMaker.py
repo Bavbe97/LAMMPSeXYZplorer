@@ -2,7 +2,7 @@ import sys
 import unittest
 import pandas as pd
 from lammpshade.GraphMaker import GraphMaker
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call
 from io import StringIO
 
 class Test_GraphMaker_init_(unittest.TestCase):
@@ -323,74 +323,230 @@ class Test_GraphMaker_run(unittest.TestCase):
 class Test_GraphMaker_interactive_mode(unittest.TestCase):
     """
     Test case for the interactive_mode method of the GraphMaker class.
+
+    This test case class contains test methods to verify the behavior of the interactive_mode method
+    in the GraphMaker class. The interactive_mode method allows the user to interactively select
+    quantities to display and how to display them.
+
+    The test methods in this class cover different scenarios such as exiting the program, selecting
+    Display mode, selecting Combine mode, providing invalid input, and selecting keywords that are
+    not found in the data.
+
+    Each test method checks if the interactive_mode method behaves as expected and if the necessary
+    methods and functions are called with the correct arguments.
+
+    Note: The test methods in this class require the GraphMaker class and its dependencies to be properly
+    implemented and imported.
+    """
+class Test_GraphMaker_interactive_mode(unittest.TestCase):
+    """
+    Test case for the interactive_mode method of the GraphMaker class.
     """
 
-    @patch('builtins.input', side_effect=['mass', 'exit'])
+    @patch('builtins.input', side_effect=['exit'])
     @patch('builtins.print')
     def test_interactive_mode_exit(self, mock_print, mock_input):
-        """
-        Test the interactive_mode method when the user types "exit".
+            """
+            Test the interactive_mode method when the user types "exit".
 
-        This test case checks if the interactive_mode method exits the program
-        when the user types "exit".
+            This test case checks if the interactive_mode method exits the program
+            when the user types "exit".
 
-        The test passes if the program exits without any errors.
-        """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
+            The test passes if the program exits without any errors.
 
-        graph_maker.interactive_mode()
+            Args:
+                mock_print (MagicMock): A MagicMock object for mocking the print function.
+                mock_input (MagicMock): A MagicMock object for mocking the input function.
+            """
+            data = [[1, 2, 3, 4, 5]]
+            keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
-        mock_print.assert_called_with("""Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.""")
-        mock_input.assert_called_with('Select which quantities to display and how: ')
+            calls = [call('The following quantities have been found: mass, distance, time, energy, velocity'),
+                     call('Define printing settings:'),
+                     call('Input format: mode [q_name1, q_name2, q_name3]'),
+                     call('To exit the program type: "exit"'),
+                     call('Modes'),
+                     call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                     call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                     call('Exiting the loop...')]
+            
+            test_df = pd.DataFrame(data, columns=keywords)
+            graph_maker = GraphMaker(test_df)
+            graph_maker.interactive_mode()
+
+            mock_input.assert_called_with('Select which quantities to display and how: ')
+            mock_print.assert_has_calls(calls, any_order=False)
 
     @patch('builtins.input', side_effect=['Display [mass, energy]', 'exit'])
     @patch('builtins.print')
     @patch.object(GraphMaker, 'plot_graph')
     def test_interactive_mode_display_mode(self, mock_plot_graph, mock_print, mock_input):
-        """
-        Test the interactive_mode method with Display mode.
+            """
+            Test the interactive_mode method with Display mode.
 
-        This test case checks if the interactive_mode method calls the plot_graph
-        method with the correct arguments when the user selects Display mode.
+            This test case checks if the interactive_mode method calls the plot_graph
+            method with the correct arguments when the user selects Display mode.
 
-        The test passes if the plot_graph method is called with the correct arguments.
-        """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
+            The test passes if the plot_graph method is called with the correct arguments.
 
-        graph_maker.interactive_mode()
+            Args:
+                mock_plot_graph (Mock): The mock object for the plot_graph method.
+                mock_print (Mock): The mock object for the print function.
+                mock_input (Mock): The mock object for the input function.
+            """
+            data = [[1, 2, 3, 4, 5]]
+            keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
-        mock_print.assert_called_with('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.')
-        mock_input.assert_called_with('Select which quantities to display and how: ')
-        mock_plot_graph.assert_called_with(['energy'])
+            calls = [call('The following quantities have been found: mass, distance, time, energy, velocity'),
+                     call('Define printing settings:'),
+                     call('Input format: mode [q_name1, q_name2, q_name3]'),
+                     call('To exit the program type: "exit"'),
+                     call('Modes'),
+                     call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                     call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                     call('Define printing settings:'),
+                     call('Input format: mode [q_name1, q_name2, q_name3]'),
+                     call('To exit the program type: "exit"'),
+                     call('Modes'),
+                     call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                     call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                     call('Exiting the loop...')]
+            
+            test_df = pd.DataFrame(data, columns=keywords)
+            graph_maker = GraphMaker(test_df)
+
+            graph_maker.interactive_mode()
+
+            mock_print.assert_has_calls(calls, any_order=False)
+            mock_plot_graph.assert_called_with(['energy'])
 
     @patch('builtins.input', side_effect=['Combine [mass, energy]', 'exit'])
     @patch('builtins.print')
     @patch.object(GraphMaker, 'plot_graph')
     def test_interactive_mode_combine_mode(self, mock_plot_graph, mock_print, mock_input):
+            """
+            Test the interactive_mode method with Combine mode.
+
+            This test case checks if the interactive_mode method calls the plot_graph
+            method with the correct arguments when the user selects Combine mode.
+
+            The test passes if the plot_graph method is called with the correct arguments.
+
+            Args:
+                mock_plot_graph (Mock): The mock object for the plot_graph method.
+                mock_print (Mock): The mock object for the print function.
+                mock_input (Mock): The mock object for the input function.
+            """
+            data = [[1, 2, 3, 4, 5]]
+            keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+
+            calls = [call('The following quantities have been found: mass, distance, time, energy, velocity'),
+                     call('Define printing settings:'),
+                     call('Input format: mode [q_name1, q_name2, q_name3]'),
+                     call('To exit the program type: "exit"'),
+                     call('Modes'),
+                     call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                     call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                     call('Define printing settings:'),
+                     call('Input format: mode [q_name1, q_name2, q_name3]'),
+                     call('To exit the program type: "exit"'),
+                     call('Modes'),
+                     call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                     call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                     call('Exiting the loop...')]
+
+            test_df = pd.DataFrame(data, columns=keywords)
+            graph_maker = GraphMaker(test_df)
+
+            graph_maker.interactive_mode()
+
+            mock_print.assert_has_calls(calls, any_order=False)
+            mock_input.assert_called_with('Select which quantities to display and how: ')
+            mock_plot_graph.assert_called_with(['mass', 'energy'])
+
+    @patch('builtins.input', side_effect=['Display (miss, test)', 'exit'])
+    @patch('builtins.print')
+    def test_interactive_mode_invalid_input(self, mock_print, mock_input):
         """
-        Test the interactive_mode method with Combine mode.
+        Test case for the interactive_mode method when invalid input is provided.
 
-        This test case checks if the interactive_mode method calls the plot_graph
-        method with the correct arguments when the user selects Combine mode.
+        This test case checks if the interactive_mode method handles invalid input correctly.
+        It mocks the print and input functions and verifies the expected calls to these functions.
 
-        The test passes if the plot_graph method is called with the correct arguments.
+        Args:
+            mock_print (MagicMock): Mock object for the print function.
+            mock_input (MagicMock): Mock object for the input function.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+
+        calls = [call('The following quantities have been found: mass, distance, time, energy, velocity'),
+                 call('Define printing settings:'),
+                 call('Input format: mode [q_name1, q_name2, q_name3]'),
+                 call('To exit the program type: "exit"'),
+                 call('Modes'),
+                 call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                 call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                 call('Invalid selection, try again.'),
+                 call('Define printing settings:'),
+                 call('Input format: mode [q_name1, q_name2, q_name3]'),
+                 call('To exit the program type: "exit"'),
+                 call('Modes'),
+                 call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                 call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                 call('Exiting the loop...')]
+
         test_df = pd.DataFrame(data, columns=keywords)
         graph_maker = GraphMaker(test_df)
 
         graph_maker.interactive_mode()
 
-        mock_print.assert_called_with('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.')
         mock_input.assert_called_with('Select which quantities to display and how: ')
-        mock_plot_graph.assert_called_with(['mass', 'energy'])
+        mock_print.assert_has_calls(calls, any_order=False)
+
+    @patch('builtins.input', side_effect=['Display [miss, test]', 'exit'])
+    @patch('builtins.print')
+    def test_interactive_mode_keyword_not_found(self, mock_print, mock_input):
+        """
+        Test case for the interactive_mode method when a keyword is not found.
+
+        This test case checks if the interactive_mode method handles the scenario
+        when a keyword is not found in the DataFrame.
+
+        Args:
+            mock_print (MagicMock): A mock object for the print function.
+            mock_input (MagicMock): A mock object for the input function.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+
+        calls = [call('The following quantities have been found: mass, distance, time, energy, velocity'),
+                 call('Define printing settings:'),
+                 call('Input format: mode [q_name1, q_name2, q_name3]'),
+                 call('To exit the program type: "exit"'),
+                 call('Modes'),
+                 call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                 call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                 call('Error: miss not found'),
+                 call('Error: test not found'),
+                 call('Invalid selection, try again.'),
+                 call('Define printing settings:'),
+                 call('Input format: mode [q_name1, q_name2, q_name3]'),
+                 call('To exit the program type: "exit"'),
+                 call('Modes'),
+                 call('Display - Displays a multiple figures with all "Time vs. Quantity" data plotted separately'),
+                 call('Combine - Displays a single figure with all "Time vs. Quantity" data plotted together.'),
+                 call('Exiting the loop...')]
+
+        test_df = pd.DataFrame(data, columns=keywords)
+        graph_maker = GraphMaker(test_df)
+
+        graph_maker.interactive_mode()
+
+        mock_input.assert_called_with('Select which quantities to display and how: ')
+        mock_print.assert_has_calls(calls, any_order=False)
+
+  
 
 if __name__ == '__main__':
     unittest.main()

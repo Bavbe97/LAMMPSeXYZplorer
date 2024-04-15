@@ -1,0 +1,14 @@
+# coverage
+.coverage
+.coveragerc
+coverage.xml
+coverage_html_report
+.mypy_cache
+*.pytest_cache
+# caches
+__pycache__
+# setup.py working directory
+build
+# Egg metadata
+*.egg-info
+.eggs

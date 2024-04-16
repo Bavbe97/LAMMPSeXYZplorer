@@ -7,7 +7,18 @@ In its current state, LAMMPShade is capable of reading YAML-like output, convert
 
 ## How to Install
 
-To use LAMMPShade, you can download the repository and use it as a simple Python package. Testing and evaluation of more modules are still ongoing, and once completed, the package will be uploaded to PyPI for easier installation.
+You can install the library in two ways:
+
+### 1. Download from GitHub
+You can download the repository directly from GitHub. Once downloaded, you can use the library by importing it directly from the repository folder into your Python scripts.
+
+```git clone https://github.com/Bavbe97/LAMMPShade```
+
+### 2. Install with pip
+You can also install the library using pip once you've downloaded the repository. Navigate to the root folder of the downloaded repository and run:
+
+```pip install .```
+This will install the library along with its dependencies.
 
 ## Dependencies
 

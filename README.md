@@ -68,13 +68,13 @@ To use LAMMPShade in your Python project, follow these simple steps:
 2. **Initialize a Simulation object**: Create a Simulation object by providing the path to the LAMMPS output file you intend to convert
 
     ```python
-    sim = lp.Simulation("output.yaml")
+    simulation = lp.Simulation("output.yaml")
     ```
 
 3. **Convert to XYZ**: Convert the output data to XYZ format using the `convert_to_xyz` function.
 
     ```python
-    sim.convert_to_xyz("output.xyz")
+    simulation.convert_to_xyz("output.xyz")
     ```
 
 4. **Plot Graphs**: Initiate an interactive loop in your terminal to visualize various graphs based on the thermo data of your simulation.
@@ -100,7 +100,7 @@ For more advanced usage, you can explore additional functionalities provided by 
 - **Get thermo data**: If you're only interested on getting the thermo data of your simulation in a pandas Dataframe format.
 
   ```python
-  thermo_dataframe = sim.get_thermodata()
+  thermo_dataframe = simulation.get_thermodata()
   ```
 
 ### Example

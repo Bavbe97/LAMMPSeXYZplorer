@@ -25,8 +25,6 @@ class XYZWriter:
         Writes data in XYZ format to the output file.
     """
 
-    has_written = False
-
     def __init__(self, filepath):
         # Check if the file ends with the right format (.xyz)
         if not filepath.lower().endswith('.xyz'):
@@ -38,12 +36,13 @@ class XYZWriter:
 
         self.filepath = filepath
         self.output = None
+        self.has_written = False
 
     def __enter__(self):
-        mode = 'a' if XYZWriter.has_written else 'w'
+        mode = 'a' if self.has_written else 'w'
         os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
         self.output = open(self.filepath, mode)
-        XYZWriter.has_written = True
+        self.has_written = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

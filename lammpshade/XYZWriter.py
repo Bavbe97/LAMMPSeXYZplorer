@@ -39,6 +39,11 @@ class XYZWriter:
         self.has_written = False
 
     def __enter__(self):
+        """
+        Opens the output file for writing when the object is used as a context manager.
+        If the output file does not exists, it will be created.
+        If the output file exists, the new data will be appended to it.
+        """
         mode = 'a' if self.has_written else 'w'
         os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
         self.output = open(self.filepath, mode)
@@ -46,6 +51,9 @@ class XYZWriter:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Closes the output file when the object is used as a context manager.
+        """
         if self.output:
             self.output.close()
 

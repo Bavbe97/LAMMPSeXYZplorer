@@ -40,7 +40,8 @@ class XYZWriter:
 
     def __enter__(self):
         """
-        Opens the output file for writing when the object is used as a context manager.
+        Opens the output file for writing when the object is used as a context
+        manager.
         If the output file does not exists, it will be created.
         If the output file exists, the new data will be appended to it.
         """
@@ -79,16 +80,132 @@ class XYZWriter:
         """
 
         # Check if the required data is present in the step dictionary
+        self.check_step_data(step)
+
+        # Write number of atoms to .xyz output file
+        self.write_natoms(step)
+
+        # Flag to check if thermo data is available
+        thermo_check = [True]*2
+
+        # Attempt to process and write thermo data to .xyz output file
+        if thermo_check[0] is True:
+            thermo_check = self.process_and_write_thermo_data(step,
+                                                              thermo_check)
+
+        # Attempt to create a DataFrame from the atom data
+        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
+
+        # List of keywords to be used for reordering the DataFrame columns
+        keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
+                        'fz', 'type']
+
+        # Filter the DataFrame columns to include only the keywords in the list
+        atoms_df = atoms_df.filter(keywords_lst, axis=1)
+
+        # Write the atom data to the file
+        atoms_df.to_csv(self.output, mode='a', index=False, header=False,
+                        sep=" ", lineterminator='\n')
+
+    def check_step_data(self, step):
+        """
+        Checks if the required data to write an XYZ file is present in the
+        step dictionary.
+
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+
+        Raises
+        ------
+        KeyError
+            If the required data is not found in the step dictionary.
+
+        """
+        # Check if the required data is present in the step dictionary
         self.data_check(step, ['natoms', 'data', 'keywords'], 'atoms data')
         # Check if the required data is present in the keywords list
         self.data_check(step['keywords'], ['element', 'x', 'y', 'z'],
                         ' atoms coordinates')
 
-        # Flag to check if thermo data is available
-        thermo_check = [True]*2
+    def write_natoms(self, step):
+        """
+        Writes the number of atoms to the specified output file.
 
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+
+        Raises
+        ------
+        KeyError
+            If the number of atoms is not found in the step dictionary.
+        """
         # Attempt to write number of atoms to .xyz output file
-        self.output.write(str(step['natoms']) + '\n')
+        try:
+            self.output.write(str(step['natoms']) + '\n')
+        except KeyError:
+            print('Number of atoms was not found\n' +
+                  'Program will be terminated')
+
+    def process_and_write_thermo_data(self, step, thermo_check):
+        """
+        Processes and writes thermo data to the output file.
+
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+
+        Returns
+        -------
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+        """
+
+        if thermo_check[0] is True:
+            # Process thermo data
+            thermo_check, thermo_data = self.process_thermo_data(step,
+                                                                 thermo_check)
+
+        if thermo_check[1] is True:
+            # Process box data
+            thermo_check, thermo_data = self.process_box_data(step,
+                                                              thermo_check,
+                                                              thermo_data)
+
+        # Write thermo data
+        self.write_thermo_data(thermo_data, thermo_check)
+
+        return thermo_check
+
+    def process_thermo_data(self, step, thermo_check):
+        """
+        Processes thermo data to be written to the output file.
+
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+
+        Returns
+        -------
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+        thermo_data : str
+            A string containing the thermo data to be written to the output
+            file.
+        """
 
         # Attempt to process and write thermo data to .xyz output file
         try:
@@ -105,46 +222,82 @@ class XYZWriter:
                                     step['thermo']['data'])
             ])
 
-            # Check if box data is available
-            if 'box' not in step and thermo_check[1] is True:
-                print('Box data was not found\n' +
-                      'Program will continue without it')
-                thermo_check[1] = False
-
-            if 'box' in step:
-                # Find the index of 'Time=' in the string
-                index = thermo_data.index('Time=')
-                index = index + thermo_data[index:].index(';') + 1
-
-                # Insert box data into the string
-                thermo_data = (thermo_data[:index] + ' Box=' +
-                               str(step['box'])[1:-1] + ';' +
-                               thermo_data[index:])
-
-            # Write the thermo data to the file
-            self.output.write(thermo_data + '\n')
-
-        # If thermo data is not found, write a newline character
+        # If thermo data is not found, continue without it
         except Exception:
             if thermo_check[0] is True:
                 print('Thermo_data was not found\n' +
                       'Program will continue without it')
+                thermo_data = ''
                 thermo_check[0] = False
+
+        return thermo_check, thermo_data
+
+    def write_thermo_data(self, thermo_data, thermo_check):
+        """
+        Checks if thermo data is available and writes it to the output file.
+        If thermo data is not found, a newline character is written to the
+        file.
+
+        Parameters
+        ----------
+        thermo_data : str
+            A string containing the thermo data to be written to the output
+            file.
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+
+        """
+
+        if thermo_check[0] is True:
+            # Write the thermo data to the file
+            self.output.write(thermo_data + '\n')
+        else:
+            # Write a newline character if thermo data is not found
             self.output.write('\n')
 
-        # Attempt to create a DataFrame from the atom data
-        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
+    def process_box_data(self, step, thermo_check, thermo_data):
+        """
+        Processes box data to be written to the output file.
+        If box data is not found, a message is printed to the console.
 
-        # List of keywords to be used for reordering the DataFrame columns
-        keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
-                        'fz', 'type']
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+        thermo_data : str
+            A string containing the thermo data to be written to the output
+            file.
 
-        # Filter the DataFrame columns to include only the keywords in the list
-        atoms_df = atoms_df.filter(keywords_lst, axis=1)
+        Returns
+        -------
+        thermo_check : list
+            A list containing two boolean values to check if thermo and box
+            data are available.
+        thermo_data : str
+            A string containing the updated thermo data cointaining the box
+            data to be written to the output file.
+        """
+        # Check if box data is available
+        if 'box' not in step and thermo_check[1] is True:
+            print('Box data was not found\n' +
+                  'Program will continue without it')
+            thermo_check[1] = False
 
-        # Write the atom data to the file
-        atoms_df.to_csv(self.output, mode='a', index=False, header=False,
-                        sep=" ", lineterminator='\n')
+        if 'box' in step and thermo_check[0] is True:
+            # Find the index of 'Time=' in the string
+            index = thermo_data.index('Time=')
+            index = index + thermo_data[index:].index(';') + 1
+
+            # Insert box data into the string
+            thermo_data = (thermo_data[:index] + ' Box=' +
+                           str(step['box'])[1:-1] + ';' +
+                           thermo_data[index:])
+
+        return thermo_check, thermo_data
 
     def data_check(self, step, keys, data_type):
         """

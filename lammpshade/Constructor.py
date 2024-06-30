@@ -113,15 +113,15 @@ class Simulation:
 
                 elif thermo_flag:
                     thermo_flag = self.get_step_thermodata(step)
-                    print('Step n. ', i, ' processed')
-                    i += 1
                     step = self.file.get_next_step()
 
                 elif not thermo_flag:
                     print('No thermo data found in the file')
                     break
+                print('Step n. ', i, ' processed')
+                i += 1
 
-            if thermo_flag:
+            if thermo_flag and self.thermo_keywords is not None:
                 thermo = pd.DataFrame(self.thermo_data,
                                       columns=self.thermo_keywords)
                 return thermo
@@ -158,9 +158,8 @@ class Simulation:
             try:
                 self.thermo_keywords = []
                 self.thermo_keywords = step['thermo']['keywords']
-            except KeyError('No thermo data found in the step'):
+            except Exception:
                 # No thermo data found in the step
-                print('No thermo data found in the file')
                 thermo_flag = False
                 # Return thermo_flag to indicate no thermo data found
                 return thermo_flag

@@ -90,19 +90,8 @@ class XYZWriter:
         if self.thermo_check[0] is True:
             self.thermo_check = self.process_and_write_thermo_data(step)
 
-        # Attempt to create a DataFrame from the atom data
-        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
-
-        # List of keywords to be used for reordering the DataFrame columns
-        keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
-                        'fz', 'type']
-
-        # Filter the DataFrame columns to include only the keywords in the list
-        atoms_df = atoms_df.filter(keywords_lst, axis=1)
-
-        # Write the atom data to the file
-        atoms_df.to_csv(self.output, mode='a', index=False, header=False,
-                        sep=" ", lineterminator='\n')
+        # Create and write atom data to .xyz output file
+        self.create_and_write_atom_data(step)
 
     def check_step_data(self, step):
         """
@@ -293,6 +282,50 @@ class XYZWriter:
                            thermo_data[index:])
 
         return self.thermo_check, thermo_data
+    
+    def create_and_write_atom_data(self, step):
+        """
+        Creates a DataFrame from the atom data, filters it, and writes it to
+        the output file with a specific format.
+
+        Parameters
+        ----------
+        step : dict
+            A dictionary containing the data to be written to the file.
+        """
+        # Create a DataFrame from the atom data
+        atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
+        
+        # Reorder the DataFrame columns
+        atoms_df = self.process_atom_data_df(atoms_df)
+
+        # Write the atom data to the file
+        atoms_df.to_csv(self.output, mode='a', index=False, header=False,
+                        sep=" ", lineterminator='\n')
+
+    def process_atom_data_df(self, atoms_df):
+        """
+        Filters the DataFrame columns to include only the keywords needed for
+        writing the atom data to the output file.
+        The keywords are reordered to match the required format.
+        
+        Parameters
+        ----------
+        atoms_df : DataFrame
+            A DataFrame containing the atom data.
+        
+        Returns
+        -------
+        atoms_df : DataFrame
+            A DataFrame containing the filtered atom data."""
+        # List of keywords to be used for reordering the DataFrame columns
+        keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
+                        'fz', 'type']
+
+        # Filter the DataFrame columns to include only the keywords in the list
+        atoms_df = atoms_df.filter(keywords_lst, axis=1)
+
+        return atoms_df
 
     def data_check(self, step, keys, data_type):
         """

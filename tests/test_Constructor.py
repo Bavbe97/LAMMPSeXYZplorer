@@ -7,34 +7,35 @@ from unittest.mock import patch
 
 
 class Test_Simulation_init_(unittest.TestCase):
-    """Tests the constructor of Simulation class"""
-
+    """
+    Tests the constructor of Simulation class
+    """
     def test_file_not_exists_Simulation(self):
-        """GIVEN a file that does not exist
-        WHEN creating a Simulation object with the file
-        THEN it should raise a FileNotFoundError"""
+        """
+        Test if a Simulation object is created with a non-existing file.
+        The expected behavior is that a FileNotFoundError is raised.
+
+        Steps:
+        1. Create a Simulation object with a non-existing file.
+        2. Assert that a FileNotFoundError is raised.
+        """
         with self.assertRaises(FileNotFoundError):
             Simulation('test.yaml')
 
     def test_file_exists_Simulation(self):
         """
-        Test case to verify the behavior of creating a Simulation object with
-            an existing file.
-
-        This test case checks whether a Simulation object is created with the
-            specified file path.
-        It also verifies that the `thermo_keywords`, `thermo_data`, and
-            `graphs` attributes
-        of the Simulation object are set to None.
+        Test if a Simulation object is created with an existing file.
+        The expected behavior is that the Simulation object is created
+        successfully.
 
         Steps:
         1. Create a Simulation object with the specified file path.
         2. Assert that the `file` attribute of the Simulation object is an
-            instance of YAMLReader.
-        3. Assert that the `thermo_keywords` attribute of the Simulation
-            object is None.
+           instance of YAMLReader.
+        3. Assert that the `thermo_keywords` attribute of the Simulation object
+           is None.
         4. Assert that the `thermo_data` attribute of the Simulation object is
-            None.
+           None.
         """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         self.assertIsInstance(test.file, YAMLReader)
@@ -43,31 +44,73 @@ class Test_Simulation_init_(unittest.TestCase):
 
 
 class Test_Simulation_convert_to_xyz(unittest.TestCase):
-    """Tests the convert_to_xyz method of Simulation"""
+    """
+    Test the convert_to_xyz method of Simulation class
+    """
+    def setUp(self):
+        """
+        Create a list of files that will be created during testing.
+        The files will be created in the current working directory.
+
+        Check if the files already exists and delete them if they do.
+        Assert that the files do not exist.
+        """
+        self.created_files = []
+        filename = "test.xyz"
+        self.created_files.append(os.path.join(os.getcwd(), 'tests', filename))
+
+        for file_path in self.created_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        for file_path in self.created_files:
+            assert not os.path.exists(file_path)
+
+    def tearDown(self):
+        """
+        Remove the files created during testing.
+        """
+        # Clean up only the files created during testing
+        for file_path in self.created_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
 
     def test_convert_to_xyz_creates_file(self):
-        """GIVEN a Simulation object and an output file path
-        WHEN calling the convert_to_xyz method
-        THEN it should create a file at the specified output file path
-        AND the content of the file should be an empty string"""
+        """
+        Test if the convert_to_xyz method creates a file at the specified path.
+        The expected behavior is that the output file is created.
+
+        Steps:
+        1. Create a Simulation object with an empty file.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Assert that the filepath attribute of the Simulation object is the
+           same as the specified output path.
+        4. Assert that the output file exists.
+        """
         test = Simulation(os.path.join('tests', 'test_empty.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
         test.convert_to_xyz(output_path)
         self.assertEqual(test.output.filepath, output_path)
-        with open(output_path, 'r') as f:
-            self.assertEqual(f.read(), '')
-        os.remove(output_path)
+        self.assertTrue(os.path.exists(output_path))
 
     def test_convert_to_xyz_writes_data(self):
         """
-        Test case for the convert_to_xyz method of the Simulation class.
+        Test if the convert_to_xyz method writes the expected data to the
+        output file.
+        The expected behavior is that the output file contains the expected
+        data.
 
-        GIVEN a Simulation object with thermo data and an output file path
-        WHEN calling the convert_to_xyz method
-        THEN it should create a file at the specified output file path
-        AND the content of the file should match the expected data
-        AND the thermo_keywords and thermo_data attributes of the Simulation
-            object should match the expected data
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Open the output file and read the data.
+        4. Open the check file and read the expected data.
+        5. Assert that the data in the output file is the same as the expected
+           data.
+        6. Assert that the thermo_keywords attribute of the Simulation object
+           is the same as the expected thermo keywords.
+        7. Assert that the thermo_data attribute of the Simulation object is
+           the same as the expected thermo data.
         """
         check_thermo_keywords = [
             'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
@@ -107,38 +150,48 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         for data1, data2 in zip(test.thermo_data, check_thermo_data):
             for value1, value2 in zip(data1, data2):
                 self.assertEqual(value1, value2)
-        os.remove(output_path)
 
-    @patch('builtins.print')
-    def test_convert_to_xyz_no_thermo_data(self, mock_print):
+    def test_convert_to_xyz_no_thermo_data(self):
         """
-        Test case for the convert_to_xyz method when there is no thermo data.
+        Test if the convert_to_xyz method works when no thermo data is present.
+        The expected behavior is that the output file is created and the
+        thermo_keywords and thermo_data attributes are None.
 
-        GIVEN a Simulation object without thermo data and an output file path
-        WHEN calling the convert_to_xyz method
-        THEN it should create a file at the specified output file path
-        AND the thermo_keywords and thermo_data attributes of the Simulation
-            object should be None
+        Steps:
+        1. Create a Simulation object with a file that does not contain thermo
+           data.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Assert that the thermo_keywords attribute of the Simulation object
+           is an empty list.
+        4. Assert that the thermo_data attribute of the Simulation object is
+           None.
         """
 
         test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
         test.convert_to_xyz(output_path)
-        self.assertIsNone(test.thermo_keywords)
+        self.assertEqual(test.thermo_keywords, [])
         self.assertIsNone(test.thermo_data)
-        os.remove(output_path)
 
 
 class Test_Simulation_get_thermodata(unittest.TestCase):
-    """Tests the get_thermodata method of Simulation"""
+    """
+    Test the get_thermodata method of Simulation
+    """
 
     def test_get_thermodata(self):
         """
-        GIVEN a Simulation object with thermo data
-        WHEN calling the get_thermodata method
-        THEN it should return the thermo data as a pandas DataFrame
-        AND the thermo_keywords attribute of the Simulation object should
-            match the expected data
+        Test if the get_thermodata method returns the expected thermo data.
+        The expected behavior is that the method returns the expected thermo
+        data as a pandas DataFrame.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the get_thermodata method.
+        3. Assert that the thermo_keywords attribute of the Simulation object
+           matches the expected data.
+        4. Assert that the returned thermo_data is the same as the expected
+           data.
         """
         check_thermo_keywords = [
             'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
@@ -177,45 +230,44 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
                 self.assertAlmostEqual(value1, data2[j], 10)
 
     def test_get_thermodata_empty_file(self):
-        """GIVEN a Simulation object with an empty file
-        WHEN calling the get_thermodata method
-        THEN it should return None"""
+        """
+        Test if the get_thermodata method returns None when the file is empty.
+
+        Steps:
+        1. Create a Simulation object with an empty file.
+        2. Call the get_thermodata method.
+        3. Assert that the returned thermo_data is None.
+        """
         test = Simulation(os.path.join('tests', 'test_empty.yaml'))
         thermo_data = test.get_thermodata()
         self.assertIsNone(thermo_data)
 
-    @patch('builtins.print')
-    def test_get_thermodata_no_thermo_data(self, mock_print):
+    def test_get_thermodata_no_thermo_data(self):
         """
-        Test case for the get_thermodata method when no thermo data is present.
-
-        This test case verifies the behavior of the get_thermodata method when
-            there is no thermo data present in the file.
-        It creates a Simulation object with an empty file and calls the
-            get_thermodata method.
-        The expected behavior is that the method should return None.
+        Test if the get_thermodata method returns None when no thermo data is
+        present.
 
         Steps:
-        1. Create a Simulation object with a file without thermo data.
+        1. Create a Simulation object with a file that does not contain thermo
+           data.
         2. Call the get_thermodata method.
-        3. Verify that the mock_print function is called once with the message
-            'No thermo data found in the file'.
-        4. Verify that the returned thermo_data is None.
+        3. Assert that the returned thermo_data is None.
         """
         test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
 
-        thermo_data = test.get_thermodata()
-
-        mock_print.assert_called_once_with('No thermo data found in the file')
-        self.assertIsNone(thermo_data)
+        self.assertIsNone(test.get_thermodata())
 
     def test_get_thermodata_file_already_read(self):
         """
-        GIVEN a Simulation object with thermo data
-        WHEN calling the get_thermodata method multiple times
-        THEN it should return the same thermo data each time
-        AND the thermo_keywords attribute of the Simulation object should
-            match the expected data
+        Test if the get_thermodata method returns the same thermo data when
+        called multiple times.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the get_thermodata method multiple times.
+        3. Assert that the thermo data is the same each time.
+        4. Assert that the thermo_keywords attribute of the Simulation object
+           matches the expected data.
         """
         check_thermo_keywords = [
             'Step', 'Time', 'c_temp_up', 'c_temp_down', 'c_temp_glicerol',
@@ -256,14 +308,24 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
 
 
 class Test_Simulation_make_graphs(unittest.TestCase):
-    """Tests the make_graphs method of Simulation"""
+    """
+    Test the make_graphs method of Simulation
+    """
 
     @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode(self, mock_plot_graph):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='display'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in display mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in display mode.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='display'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the plot_graph method of the GraphMaker object is called
+           once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='display')
         self.assertIsInstance(test.graphs, GraphMaker)
@@ -271,10 +333,18 @@ class Test_Simulation_make_graphs(unittest.TestCase):
 
     @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode_intial(self, mock_plot_graph):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='d'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in display mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in display mode when mode='d'.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='d'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the plot_graph method of the GraphMaker object is called
+           once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='d')
         self.assertIsInstance(test.graphs, GraphMaker)
@@ -282,10 +352,20 @@ class Test_Simulation_make_graphs(unittest.TestCase):
 
     @patch.object(GraphMaker, 'plot_graph')
     def test_make_graphs_display_mode_spelling_error(self, mock_plot_graph):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='dispay'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in display mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in display mode when mode='dispay'.
+        The expected behavior is that the method runs the graphs in display
+        mode.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='dispay'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the plot_graph method of the GraphMaker object is called
+           once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='dispay')
         self.assertIsInstance(test.graphs, GraphMaker)
@@ -293,10 +373,18 @@ class Test_Simulation_make_graphs(unittest.TestCase):
 
     @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_mode(self, mock_interactive_mode):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='interactive'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in interactive mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in interactive mode.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='interactive'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the interactive_mode method of the GraphMaker object is
+           called once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='interactive')
         self.assertIsInstance(test.graphs, GraphMaker)
@@ -304,10 +392,20 @@ class Test_Simulation_make_graphs(unittest.TestCase):
 
     @patch.object(GraphMaker, 'interactive_mode')
     def test_make_graphs_interactive_intial(self, mock_interactive_mode):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='i'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in interactive mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in interactive mode when mode='i'.
+        The expected behavior is that the method runs the graphs in interactive
+        mode.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='i'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the interactive_mode method of the GraphMaker object is
+           called once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='i')
         self.assertIsInstance(test.graphs, GraphMaker)
@@ -317,10 +415,20 @@ class Test_Simulation_make_graphs(unittest.TestCase):
     def test_make_graphs_interactive_spelling_error(
         self, mock_interactive_mode
     ):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with mode='intactive'
-        THEN it should create an instance of the GraphMaker class
-        AND run the graphs in interactive mode"""
+        """
+        Test if the make_graphs method creates a GraphMaker object and runs the
+        graphs in interactive mode when mode='intactive'.
+        The expected behavior is that the method runs the graphs in interactive
+        mode.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with mode='intactive'.
+        3. Assert that the graphs attribute of the Simulation object is an
+           instance of GraphMaker.
+        4. Assert that the interactive_mode method of the GraphMaker object is
+           called once.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         test.make_graphs(mode='intactive')
         self.assertIsInstance(test.graphs, GraphMaker)

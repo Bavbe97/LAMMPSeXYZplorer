@@ -1,0 +1,14 @@
+---
+creator: LAMMPS
+timestep: 0
+units: real
+time: 0
+natoms: 20286
+boundary: [ p, p, p, p, s, s, ]
+box:
+  - [ 0, 53.116896629333496 ]
+  - [ 0, 52.572092056274414 ]
+  - [ 0.43933719493705575, 96.33734401328508 ]
+keywords: [ id, type, mass, element, x, y, z, vx, vy, vz, fx, fy, fz,  ]
+data:
+...

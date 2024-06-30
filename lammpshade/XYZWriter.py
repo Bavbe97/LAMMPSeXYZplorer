@@ -34,9 +34,10 @@ class XYZWriter:
         if not os.path.exists(filepath):
             filepath = os.path.join(os.getcwd(), 'xyz', filepath)
 
-        self.filepath = filepath
-        self.output = None
-        self.has_written = False
+        self.filepath = filepath  # Path to the output file
+        self.output = None  # File object to write data to
+        self.has_written = False  # Flag to check if the file has been written
+        self.thermo_check = [True]*2  # Flag to check if thermo and box data are available
 
     def __enter__(self):
         """
@@ -85,13 +86,9 @@ class XYZWriter:
         # Write number of atoms to .xyz output file
         self.write_natoms(step)
 
-        # Flag to check if thermo data is available
-        thermo_check = [True]*2
-
         # Attempt to process and write thermo data to .xyz output file
-        if thermo_check[0] is True:
-            thermo_check = self.process_and_write_thermo_data(step,
-                                                              thermo_check)
+        if self.thermo_check[0] is True:
+            self.thermo_check = self.process_and_write_thermo_data(step)
 
         # Attempt to create a DataFrame from the atom data
         atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
@@ -150,7 +147,7 @@ class XYZWriter:
             print('Number of atoms was not found\n' +
                   'Program will be terminated')
 
-    def process_and_write_thermo_data(self, step, thermo_check):
+    def process_and_write_thermo_data(self, step):
         """
         Processes and writes thermo data to the output file.
 
@@ -169,23 +166,21 @@ class XYZWriter:
             data are available.
         """
 
-        if thermo_check[0] is True:
+        if self.thermo_check[0] is True:
             # Process thermo data
-            thermo_check, thermo_data = self.process_thermo_data(step,
-                                                                 thermo_check)
+            thermo_check, thermo_data = self.process_thermo_data(step)
 
-        if thermo_check[1] is True:
+        if self.thermo_check[1] is True:
             # Process box data
             thermo_check, thermo_data = self.process_box_data(step,
-                                                              thermo_check,
                                                               thermo_data)
 
         # Write thermo data
-        self.write_thermo_data(thermo_data, thermo_check)
+        self.write_thermo_data(thermo_data)
 
-        return thermo_check
+        return self.thermo_check
 
-    def process_thermo_data(self, step, thermo_check):
+    def process_thermo_data(self, step):
         """
         Processes thermo data to be written to the output file.
 
@@ -224,15 +219,15 @@ class XYZWriter:
 
         # If thermo data is not found, continue without it
         except Exception:
-            if thermo_check[0] is True:
+            if self.thermo_check[0] is True:
                 print('Thermo_data was not found\n' +
                       'Program will continue without it')
                 thermo_data = ''
-                thermo_check[0] = False
+                self.thermo_check[0] = False
 
-        return thermo_check, thermo_data
+        return self.thermo_check, thermo_data
 
-    def write_thermo_data(self, thermo_data, thermo_check):
+    def write_thermo_data(self, thermo_data):
         """
         Checks if thermo data is available and writes it to the output file.
         If thermo data is not found, a newline character is written to the
@@ -249,14 +244,14 @@ class XYZWriter:
 
         """
 
-        if thermo_check[0] is True:
+        if self.thermo_check[0] is True:
             # Write the thermo data to the file
             self.output.write(thermo_data + '\n')
         else:
             # Write a newline character if thermo data is not found
             self.output.write('\n')
 
-    def process_box_data(self, step, thermo_check, thermo_data):
+    def process_box_data(self, step, thermo_data):
         """
         Processes box data to be written to the output file.
         If box data is not found, a message is printed to the console.
@@ -282,12 +277,12 @@ class XYZWriter:
             data to be written to the output file.
         """
         # Check if box data is available
-        if 'box' not in step and thermo_check[1] is True:
+        if 'box' not in step and self.thermo_check[1] is True:
             print('Box data was not found\n' +
                   'Program will continue without it')
-            thermo_check[1] = False
+            self.thermo_check[1] = False
 
-        if 'box' in step and thermo_check[0] is True:
+        if 'box' in step and self.thermo_check[0] is True:
             # Find the index of 'Time=' in the string
             index = thermo_data.index('Time=')
             index = index + thermo_data[index:].index(';') + 1
@@ -297,7 +292,7 @@ class XYZWriter:
                            str(step['box'])[1:-1] + ';' +
                            thermo_data[index:])
 
-        return thermo_check, thermo_data
+        return self.thermo_check, thermo_data
 
     def data_check(self, step, keys, data_type):
         """

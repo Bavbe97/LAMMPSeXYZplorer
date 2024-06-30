@@ -37,7 +37,7 @@ class XYZWriter:
         self.filepath = filepath  # Path to the output file
         self.output = None  # File object to write data to
         self.has_written = False  # Flag to check if the file has been written
-        self.thermo_check = [True]*2  # Flag to check if thermo and box data are available
+        self.thermo_check = [True]*2  # Flag to check for thermo and box data
 
     def __enter__(self):
         """
@@ -84,7 +84,7 @@ class XYZWriter:
         self.check_step_data(step)
 
         # Write number of atoms to .xyz output file
-        self.write_natoms(step)
+        self.check_write_natoms(step)
 
         # Attempt to process and write thermo data to .xyz output file
         if self.thermo_check[0] is True:
@@ -115,7 +115,7 @@ class XYZWriter:
         self.data_check(step['keywords'], ['element', 'x', 'y', 'z'],
                         ' atoms coordinates')
 
-    def write_natoms(self, step):
+    def check_write_natoms(self, step):
         """
         Writes the number of atoms to the specified output file.
 
@@ -130,11 +130,15 @@ class XYZWriter:
             If the number of atoms is not found in the step dictionary.
         """
         # Attempt to write number of atoms to .xyz output file
-        try:
+        if 'natoms' not in step:
+            raise KeyError("Number of atoms is not found in the step" +
+                           "dictionary\n" +
+                           "Program will be terminated")
+        if not isinstance(step['natoms'], int) or step['natoms'] < 0:
+            raise TypeError("Number of atoms must be a positive integer\n" +
+                            "Program will be terminated")
+        else:
             self.output.write(str(step['natoms']) + '\n')
-        except KeyError:
-            print('Number of atoms was not found\n' +
-                  'Program will be terminated')
 
     def process_and_write_thermo_data(self, step):
         """
@@ -282,7 +286,7 @@ class XYZWriter:
                            thermo_data[index:])
 
         return self.thermo_check, thermo_data
-    
+
     def create_and_write_atom_data(self, step):
         """
         Creates a DataFrame from the atom data, filters it, and writes it to
@@ -295,7 +299,7 @@ class XYZWriter:
         """
         # Create a DataFrame from the atom data
         atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])
-        
+
         # Reorder the DataFrame columns
         atoms_df = self.process_atom_data_df(atoms_df)
 
@@ -308,12 +312,12 @@ class XYZWriter:
         Filters the DataFrame columns to include only the keywords needed for
         writing the atom data to the output file.
         The keywords are reordered to match the required format.
-        
+
         Parameters
         ----------
         atoms_df : DataFrame
             A DataFrame containing the atom data.
-        
+
         Returns
         -------
         atoms_df : DataFrame

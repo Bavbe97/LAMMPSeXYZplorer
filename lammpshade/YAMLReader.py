@@ -1,12 +1,6 @@
 """
 This module provides a class for reading YAML-formatted files and extracting
 data.
-
-Module Attributes:
-- None
-
-Classes:
-- YAMLReader: A class to read YAML-formatted files and extract data.
 """
 
 
@@ -14,22 +8,42 @@ class YAMLReader:
     """
     A class to read YAML-formatted files and extract data.
 
-    Attributes:
-    - filename (str): The path to the YAML file.
-    - file (file object): The file object representing the opened YAML file.
-    - current_step (dict): A dictionary containing data from the current step.
+    ...
+
+    Attributes
+    ----------
+    filename : str
+        The path to the YAML file.
+    file : file
+        The file object representing the opened YAML file.
+    current_step : dict
+        A dictionary containing data from the current step.
+
+    Methods
+    -------
+    __init__(filename)
+        Initializes a YAMLReader object.
+    convert_value(value)
+        Converts a string variable to an INT, FLOAT, or LIST based on its
+        content.
+    get_next_step()
+        Reads the next step from the YAML file and returns its data.
+
     """
 
     def __init__(self, filename):
         """
         Initializes a YAMLReader object.
 
-        Parameters:
-        - filename (str, optional): The path to the YAML file. Defaults to
-                                    None.
+        Parameters
+        ---------
+        filename : str
+            The path to the YAML file. Defaults to None.
 
-        Raises:
-        - FileNotFoundError: If the specified file is not found.
+        Raises
+        ------
+        FileNotFoundError
+            If the specified file is not found.
         """
         self.filename = filename
         self.current_step = None
@@ -41,24 +55,29 @@ class YAMLReader:
     def convert_value(self, value):
         """
         Converts a string variable to an INT, FLOAT, or LIST based on its
+        content.
+
+        Parameters
+        ----------
+        value : str
+            String that needs to be converted.
+
+        Returns
+        -------
+        int(value) : int
+            If the content of the string contains only digits, it's converted
+            to an integer.
+        float(value) : float
+            If the string contains a dot ('.') and the content is in a valid
+            floating-point format, it's converted to a float.
+        converted_elements : list
+            If the string starts and ends with square brackets ('[', ']'),
+            it's converted to a list of elements. Elements in the list are
+            converted to integers, floats, or remain as strings based on their
             content.
-
-        Parameters:
-        - value (str): String that needs to be converted.
-
-        Returns:
-        - int(value) (int): If the content of the string contains only digits,
-                            it's converted to an integer.
-        - float(value) (float): If the string contains a dot ('.') and the
-                                content is in a valid floating-point format,
-                                it's converted to a float.
-        - converted_elements (list): If the string starts and ends with square
-                                     brackets ('[', ']'), it's converted to a
-                                     list of elements. Elements in the list
-                                     are converted to integers, floats, or
-                                     remain as strings based on their content.
-        - value (str): If the content doesn't match any of the conversion
-                       criteria, the original string is returned unchanged.
+        value : str
+            If the content doesn't match any of the conversion criteria, the
+            original string is returned unchanged.
         """
         # Assure right formatting of the value
         value = value.strip()
@@ -102,9 +121,12 @@ class YAMLReader:
     def get_next_step(self):
         """
         Reads the next step from the YAML file and returns its data.
+        The data is stored in a dictionary.
 
-        Returns:
-        - dict: A dictionary containing data from the next step.
+        Returns
+        -------
+        step :  dict
+            A dictionary containing data from the next step.
         """
         step = {}
         line = self.file.readline()

@@ -40,41 +40,44 @@ class GraphMaker:
     """
     A class for creating and plotting graphs based on a DataFrame.
 
-    Attributes:
-        df (pandas.DataFrame): The DataFrame containing data.
-        keywords_list (list): List of keywords.
+    ...
 
-    Methods:
-        __init__(self, df, keywords_list=None):
-            Initializes the GraphMaker object.
+    Attributes
+    ----------
+    df : pandas.DataFrame
+        The DataFrame containing data.
+    keywords_list : list
+        List of keywords.
 
-        process_columns(self):
-            Processes the DataFrame columns based on the provided keywords
-                list.
-
-        plot_graph(self, columns, df=None, x=None, y=None):
-            Plots the graph based on the provided columns, xlabel, and ylabel.
-
-        run(self, mode, keywords_list=[]):
-            Runs the GraphMaker in the specified mode.
-
-        interactive_mode(self):
-            Enters the interactive mode for the graph maker.
+    Methods
+    -------
+    __init__(df, keywords_list=None)
+        Initializes the GraphMaker object.
+    process_columns()
+        Processes the DataFrame columns based on the provided keywords list.
+    plot_graph(columns, df=None, x=None, y=None)
+        Plots the graph based on the provided columns, xlabel, and ylabel.
+    run(mode, keywords_list=[])
+        Runs the GraphMaker in the specified mode.
+    interactive_mode()
+        Enters the interactive mode for the graph maker.
     """
 
     def __init__(self, df, keywords_list=None):
         """
         Initializes the GraphMaker object.
 
-        Args:
-            df (pandas.DataFrame): The DataFrame containing data.
-            keywords_list (list, optional): List of keywords. Defaults to None.
+        Arguments
+        ---------
+        df : pandas.DataFrame
+            The DataFrame containing data.
+        keywords_list : list, optional
+            List of keywords. Defaults to None.
 
-        Raises:
-            ValueError: If df is empty.
-
-        Returns:
-            None
+        Raises
+        ------
+        ValueError
+            If df is empty.
         """
         if df.empty:
             raise ValueError('Data cannot be empty')
@@ -85,11 +88,14 @@ class GraphMaker:
         """
         Processes the DataFrame columns based on the provided keywords list.
 
-        Args:
-            None
+        Arguments
+        ---------
+        None
 
-        Returns:
-            list: A list containing the column names that match the keywords.
+        Returns
+        -------
+        matching_columns : list
+            A list containing the column names that match the keywords.
         """
         # Find the column names that match the keywords
         if self.keywords_list is None:
@@ -105,18 +111,24 @@ class GraphMaker:
         """
         Plot a graph based on the given data.
 
-        Args:
-            columns (list): A list of column names to plot. If empty, all
-                columns except 'Time' will be plotted.
-            df (pandas.DataFrame, optional): The DataFrame containing the data.
-                If not provided, the instance's df attribute will be used.
-            x (array-like, optional): The x-axis values for the plot.
-                Only used if both x and y are provided.
-            y (array-like, optional): The y-axis values for the plot.
-                Only used if both x and y are provided.
+        Arguments
+        ---------
+        columns : list
+            A list of column names to plot. If empty, all columns except 'Time'
+            will be plotted.
+        df : pandas.DataFrame, optional
+            The DataFrame containing the data. If not provided, the instance's
+            df attribute will be used.
+        x : array-like, optional
+            The x-axis values for the plot. Only used if both x and y are
+            provided.
+        y : array-like, optional
+            The y-axis values for the plot. Only used if both x and y are
+            provided.
 
-        Returns:
-            None
+        Returns
+        -------
+        None
         """
         fig, ax = plt.subplots()
         if x is not None and y is not None:
@@ -136,17 +148,23 @@ class GraphMaker:
         """
         Run the GraphMaker in the specified mode.
 
-        Parameters:
-        - mode (str): The mode in which to run the GraphMaker.
-            Valid values are 'd' for default mode and 'i' for interactive mode.
-        - keywords_list (list): A list of keywords to be used for processing
-            columns.
+        Parameters
+        ----------
+        mode : str
+            The mode in which to run the GraphMaker. Valid values are 'd' for
+            default mode and 'i' for interactive mode.
+        keywords_list : list, optional
+            A list of keywords to be used for processing columns. Defaults to
+            an empty list.
 
-        Raises:
-        - ValueError: If an invalid mode is provided.
+        Returns
+        -------
+        None
 
-        Returns:
-        - None
+        Raises
+        ------
+        ValueError
+            If an invalid mode is provided.
         """
 
         self.keywords_list = keywords_list
@@ -164,8 +182,9 @@ class GraphMaker:
         Allows the user to select quantities to plot and choose the
         plotting mode.
 
-        Returns:
-            None
+        Returns
+        -------
+        None
         """
 
         # Give user info on plottable keywords

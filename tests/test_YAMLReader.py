@@ -10,9 +10,12 @@ class Test_YAMLReader_init_(unittest.TestCase):
     """
     def test_init_file_not_found(self):
         """
-        GIVEN: A non-existent filename
-        WHEN: Instantiating the YAMLReader class with the non-existent filename
-        THEN: It should raise a FileNotFoundError
+        Test if the constructor raises a FileNotFoundError when the specified
+        file is not found.
+
+        Steps:
+        1. Instantiate the YAMLReader class with a non-existent filename.
+        2. Assert that a FileNotFoundError is raised.
         """
 
         with self.assertRaises(FileNotFoundError):
@@ -26,9 +29,13 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
     """
     def test_convert_value_int(self):
         """
-        GIVEN: An integer string
-        WHEN: Calling the convert_value method with the integer string
-        THEN: It should return the corresponding integer value
+        Test if the convert_value method returns the corresponding integer
+        value when called with an integer string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_value method with an integer string.
+        3. Assert that the method returns the corresponding integer value.
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
@@ -38,9 +45,13 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
 
     def test_convert_value_float(self):
         """
-        GIVEN: A float string
-        WHEN: Calling the convert_value method with the float string
-        THEN: It should return the corresponding float value
+        Test if the convert_value method returns the corresponding float value
+        when called with a float string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_value method with a float string.
+        3. Assert that the method returns the corresponding float value.
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
@@ -53,9 +64,14 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
 
     def test_convert_value_list_integers(self):
         """
-        GIVEN: A list of integer strings
-        WHEN: Calling the convert_value method with the list of integer strings
-        THEN: It should return a list of corresponding integer values
+        Test if the convert_value method returns a list of corresponding
+        integer values when called with a list of integer strings.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_value method with a list of integer strings.
+        3. Assert that the method returns a list of corresponding integer
+           values.
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
@@ -64,9 +80,14 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
 
     def test_convert_value_list_strings(self):
         """
-        GIVEN: A list of string strings
-        WHEN: Calling the convert_value method with the list of string strings
-        THEN: It should return a list of corresponding string values
+        Test if the convert_value method returns a list of corresponding string
+        values when called with a list of string strings.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_value method with a list of string strings.
+        3. Assert that the method returns a list of corresponding string
+           values.
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
@@ -76,10 +97,15 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
 
     def test_convert_value_list_mixed(self):
         """
-        GIVEN: A list of mixed type strings
-        WHEN: Calling the convert_value method with the list of mixed type
-              strings
-        THEN: It should return a list of corresponding mixed type values
+        Test if the convert_value method returns a list of corresponding
+        integer, float, and string values when called with a list of mixed type
+        strings.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_value method with a list of mixed type strings.
+        3. Assert that the method returns a list of corresponding integer,
+           float, and string values.
         """
 
         yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
@@ -94,10 +120,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
     """
     def test_get_next_step_subsequent_key_value_pairs(self):
         """
-        GIVEN: A YAML file with subsequent key-value pairs
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs from the YAML
-              file
+        Test if the get_next_step method returns subsequent key-value pairs
+        from the YAML file.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -125,11 +158,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_value_then_key_dictionaries(self):
         """
-        GIVEN: A YAML file with subsequent key-value pairs and then a
-               key-dictionary pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs and then the
-              key-dictionary pair from the YAML file
+        Test if the get_next_step method returns a key-value pair and then a
+        key-dictionary pair from the YAML file.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -160,11 +199,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_value_then_key_lists(self):
         """
-        GIVEN: A YAML file with subsequent key-value pairs and then a key-list
-               pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-value pairs and then the
-              key-list pair from the YAML file
+        Test if the get_next_step method returns a key-value pair and then a
+        key-list pair from the YAML file.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -194,11 +239,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_dictionaries_then_key_lists(self):
         """
-        GIVEN: A YAML file with subsequent key-dictionary pairs and then a
-               key-list pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-dictionary pairs and then
-              the key-list pair from the YAML file
+        Test if the get_next_step method returns a key-dictionary pair and then
+        a key-list pair from the YAML file.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -231,9 +282,20 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_file_ends(self):
         """
-        GIVEN: A YAML file that ends
-        WHEN: Calling the get_next_step method
-        THEN: It should return an empty dictionary
+        Test if the get_next_step method returns an empty dictionary when the
+        YAML file ends.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
+        7. Call the get_next_step method again.
+        8. Verify that the close method of the mock file object is called
+           exactly once.
         """
 
         # Define YAML content to simulate reading from a file
@@ -259,11 +321,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_lists_then_key_dictionaries(self):
         """
-        GIVEN: A YAML file with subsequent key-list pairs and then a
-               key-dictionary pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-list pairs and then the
-              key-dictionary pair from the YAML file
+        Test if the get_next_step method returns subsequent key-list pairs and
+        then a key-dictionary pair from the YAML file.
+
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -296,14 +364,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_dictionaries_then_key_value(self):
         """
-        Test that the get_next_step method returns subsequent key-dictionary
-        pairs and then a key-value pair from the YAML file.
+        Test if the get_next_step method returns a key-dictionary pair and then
+        a key-value pair from the YAML file.
 
-        GIVEN: A YAML file with subsequent key-dictionary pairs and then a
-               key-value pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-dictionary pairs and then
-              the key-value pair from the YAML file
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -336,14 +407,17 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_key_lists_then_key_value(self):
         """
-        Test that the get_next_step method returns subsequent key-list pairs
-        and then a key-value pair from the YAML file.
+        Test if the get_next_step method returns subsequent key-list pairs and
+        then a key-value pair from the YAML file.
 
-        GIVEN: A YAML file with subsequent key-list pairs and then a key-value
-               pair
-        WHEN: Calling the get_next_step method
-        THEN: It should return the subsequent key-list pairs and then the
-              key-value pair from the YAML file
+        Steps:
+        1. Define YAML content to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Call the get_next_step method.
+        6. Assert the expected behavior.
         """
 
         # Define YAML content to simulate reading from a file
@@ -373,9 +447,18 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
 
     def test_get_next_step_get_subsequent_step(self):
         """
-        GIVEN: A YAML file with subsequent steps
-        WHEN: Calling the get_next_step method multiple times
-        THEN: It should return the subsequent steps from the YAML file
+        Test if the get_next_step method returns subsequent steps from the YAML
+        file.
+
+        Steps:
+        1. Define YAML lines to simulate reading from a file.
+        2. Create a mock file object.
+        3. Configure the readline method of the mock file to return lines of
+           YAML content.
+        4. Patch the open function to return the mock file object.
+        5. Instantiate the YAMLReader class with a fake filename.
+        6. Call the get_next_step method until '...' is encountered.
+        7. Assert the expected behavior.
         """
 
         # Define YAML lines to simulate reading from a file

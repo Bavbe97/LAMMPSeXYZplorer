@@ -44,7 +44,8 @@ class XYZWriter:
     process_box_data(step, thermo_data)
         Processes box data to be written to the output file.
     create_and_write_atom_data(step)
-        Creates a DataFrame from the atom data and writes it to the output file.
+        Creates a DataFrame from the atom data and writes it to the output
+        file.
     process_atom_data_df(atoms_df)
         Processes the atom data DataFrame to match the required format.
     data_check(step, keys, data_type)
@@ -85,7 +86,8 @@ class XYZWriter:
         Opens the output file for writing when the object is used as a context
         manager.
         If the output file does not exists, it will be created.
-        If the output file is already written, it will be opened in append mode.
+        If the output file is already written, it will be opened in append
+        mode.
         """
         mode = 'a' if self.has_written else 'w'
         os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
@@ -189,8 +191,10 @@ class XYZWriter:
 
     def process_and_write_thermo_data(self, step):
         """
-        If thermo data is available, processes and writes it to the output file.
-        If thermo data is not found, a newline character is written to the file.
+        If thermo data is available, processes and writes it to the output
+        file.
+        If thermo data is not found, a newline character is written to the
+        file.
 
         Parameters
         ----------

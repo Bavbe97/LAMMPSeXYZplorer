@@ -360,6 +360,6 @@ class XYZWriter:
             if key not in step:
                 data_check = False
                 raise KeyError(f"'{data_type}' not found in step.")
-        
+
         if data_check:
             return True

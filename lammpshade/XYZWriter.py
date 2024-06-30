@@ -114,6 +114,10 @@ class XYZWriter:
                 'keywords': <list of atom keywords>,
                 'data': <list of lists containing atom data>
             }
+
+        Returns
+        -------
+        None
         """
 
         # Check if the required data is present in the step dictionary
@@ -139,11 +143,14 @@ class XYZWriter:
         step : dict
             A dictionary containing the data to be written to the file.
 
+        Returns
+        -------
+        None
+
         Raises
         ------
         KeyError
             If the required data is not found in the step dictionary.
-
         """
         # Check if the required data is present in the step dictionary
         self.data_check(step, ['natoms', 'data', 'keywords'], 'atoms data')
@@ -159,6 +166,10 @@ class XYZWriter:
         ----------
         step : dict
             A dictionary containing the data to be written to the file.
+
+        Returns
+        -------
+        None
 
         Raises
         ------
@@ -273,6 +284,9 @@ class XYZWriter:
             A list containing two boolean values to check if thermo and box
             data are available.
 
+        Returns
+        -------
+        None
         """
 
         if self.thermo_check[0] is True:
@@ -342,6 +356,10 @@ class XYZWriter:
         ----------
         step : dict
             A dictionary containing the data to be written to the file.
+
+        Returns
+        -------
+        None
         """
         # Create a DataFrame from the atom data
         atoms_df = pd.DataFrame(step['data'], columns=step['keywords'])

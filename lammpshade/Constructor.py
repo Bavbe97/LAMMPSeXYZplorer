@@ -6,18 +6,19 @@ import pandas as pd
 
 """
 This module provides a Simulation class for processing LAMMPS simulation data.
-
-Classes:
-- Simulation
-
 """
 
 
 class Simulation:
     """
-    A class for processing LAMMPS simulation data.
+    A class for processing LAMMPS simulation data. The Simulation class reads
+    simulation data from a YAML file, converts the data to XYZ format, and
+    generates graphs based on the thermo data.
 
-    Attributes:
+    ...
+
+    Attributes
+    ----------
     file : YAMLReader
         The YAMLReader object for reading the simulation data file.
     thermo_keywords : list
@@ -27,7 +28,8 @@ class Simulation:
     graphs : GraphMaker
         The GraphMaker object for creating graphs.
 
-    Methods:
+    Methods
+    -------
     __init__(self, filepath)
         Initializes the Simulation object.
     convert_to_xyz(self, output)
@@ -45,8 +47,15 @@ class Simulation:
         """
         Initializes the Simulation object.
 
-        Parameters:
-        - filepath: The path to the simulation data file.
+        Parameters
+        ----------
+        filepath : str
+            The path to the simulation data file.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file is not found.
 
         """
         self.file = YAMLReader(filepath)
@@ -57,14 +66,17 @@ class Simulation:
         """
         Converts the simulation data to XYZ format.
 
-        Parameters:
-        - output: The path to the output XYZ file.
-        - thermo_flag: A boolean indicating if thermo data should be included.
+        Parameters
+        ----------
+        output : str
+            The path to the output XYZ file.
+        thermo_flag : bool
+            A boolean indicating if thermo data should be included.
             Default is True.
-        
-        Returns:
-        - None
 
+        Returns
+        ------
+        None
         """
         i = 0
         self.output = XYZWriter(output)
@@ -82,10 +94,14 @@ class Simulation:
     def get_thermodata(self):
         """
         Retrieves the thermo data from the simulation data.
+        If the thermo data is not found, prints a message and returns None.
 
-        Returns:
-        - thermo: The thermo data as a pandas DataFrame.
-
+        Returns
+        -------
+        thermo : DataFrame
+            The thermo data as a pandas DataFrame.
+        None :
+            If no thermo data is found.
         """
         i = 0
         thermo_flag = True
@@ -121,14 +137,20 @@ class Simulation:
         Retrieves the thermo data from the simulation step data.
         Append the thermo data to the thermo_data attribute.
 
-        Parameters:
-        - step: The simulation step data.
+        Parameters
+        ----------
+        step : dict
+            The simulation step data.
 
-        Returns:
-        - thermo_flag: A boolean indicating if thermo data was found.
+        Returns
+        -------
+        thermo_flag : bool
+            A boolean indicating if thermo data was found.
 
-        Raises:
-        - Exception: If no thermo data is found in the step.
+        Raises
+        ------
+        Exception
+            If no thermo data is found in the step.
         """
         thermo_flag = True
         if self.thermo_keywords is None:
@@ -157,16 +179,21 @@ class Simulation:
         Creates an instance of the GraphMaker class and generates graphs based
             on thermodynamic data.
 
-        Parameters:
-            mode (str): The mode in which the graphs should be generated.
-                Default is 'display'.
+        Parameters
+        ----------
+        mode : str
+            The mode in which the graphs should be generated.
+            Default is 'display'.
 
-        Returns:
-            None
+        Returns
+        -------
+        None
 
-        Raises:
-            ValueError: If an invalid mode is provided.
-                Valid values are "display" and "interactive".
+        Raises
+        ------
+        ValueError
+            If an invalid mode is provided.
+            Valid values are "display" and "interactive".
         """
         # Get thermo data
         thermo_df = self.get_thermodata()

@@ -11,19 +11,15 @@ class Test_GraphMaker_init_(unittest.TestCase):
 
     def test_init(self):
         """
-        Test the initialization of the GraphMaker class.
+        Test if the GraphMaker class is initialized correctly.
+        The expected behavior is that the GraphMaker class is initialized
+        correctly when provided with a non-empty DataFrame.
 
-        This test case checks if the GraphMaker class is initialized correctly
-        by comparing the df attribute of the created GraphMaker instance with a
-        test DataFrame.
-
-        The test DataFrame is created using the data and keywords lists.
-        The data list contains sample data, and the keywords list contains the
-        column names for the DataFrame.
-
-        The test passes if the df attribute of the GraphMaker instance is
-        equal to the test DataFrame.
-
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Assert that the df attribute of the GraphMaker instance is equal to
+           the test DataFrame.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -36,14 +32,14 @@ class Test_GraphMaker_init_(unittest.TestCase):
 
     def test_init_empty_df(self):
         """
-        Test the initialization of the GraphMaker class with empty DataFrame.
+        Test if the GraphMaker class raises a ValueError with an empty
+        DataFrame.
 
-        This test case checks if the GraphMaker class raises a ValueError when
-        initialized with empty DataFrame.
-
-        The test passes if the GraphMaker class raises a ValueError when
-        initialized with empty DataFrame.
-
+        Steps:
+        1. Create an empty DataFrame.
+        2. Attempt to create an instance of the GraphMaker class with the empty
+           DataFrame.
+        3. Assert that a ValueError is raised.
         """
         data = []
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -53,16 +49,17 @@ class Test_GraphMaker_init_(unittest.TestCase):
 
     def test_init_with_keywords_list(self):
         """
-        Test the initialization of the GraphMaker class with a keywords list.
+        Test if the GraphMaker class is initialized correctly with a keywords
+        list.
+        The expected behavior is that the GraphMaker class is initialized
+        correctly when provided with a non-empty DataFrame and a keywords list.
 
-        This test case checks if the GraphMaker class is initialized correctly
-        when a keywords list is provided. It compares the keywords_list
-        attribute of the created GraphMaker instance with the provided
-        keywords list.
-
-        The test passes if the keywords_list attribute of the GraphMaker
-        instance is equal to the provided keywords list.
-
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame
+           and a keywords list.
+        3. Assert that the keywords_list attribute of the GraphMaker instance
+           is equal to the provided keywords list.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -79,14 +76,16 @@ class Test_GraphMaker_process_columns(unittest.TestCase):
 
     def test_process_columns_with_keywords(self):
         """
-        Test the process_columns method with provided keywords.
+        Test if the process_columns method returns the correct list of matching
+        columns when provided with a list of keywords.
 
-        This test case checks if the process_columns method returns the
-        expected list of matching column names when provided with a list of
-        keywords.
-
-        The test passes if the returned list of matching column names is equal
-        to the expected list of matching column names.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame
+           and a list of keywords.
+        3. Call the process_columns method of the GraphMaker instance.
+        4. Assert that the returned list of matching column names is equal to
+           the expected list of matching column names.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -99,14 +98,15 @@ class Test_GraphMaker_process_columns(unittest.TestCase):
 
     def test_process_columns_without_keywords(self):
         """
-        Test the process_columns method without provided keywords.
+        Test if the process_columns method returns all the column names when no
+        keywords are provided.
 
-        This test case checks if the process_columns method returns all the
-        column names
-        when no keywords are provided.
-
-        The test passes if the returned list of column names is equal to the
-        list of all column names in the DataFrame.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the process_columns method of the GraphMaker instance.
+        4. Assert that the returned list of column names is equal to the list
+           of all column names in the DataFrame.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -117,12 +117,15 @@ class Test_GraphMaker_process_columns(unittest.TestCase):
 
     def test_process_columns_no_matches(self):
         """
-        Test the process_columns method with no matching columns.
+        Test if the process_columns method returns an empty list when no
+        columns match the provided keywords.
 
-        This test case checks if the process_columns method returns an empty
-        list when no columns match the provided keywords.
-
-        The test passes if the returned list of matching column names is empty.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame
+           and a list of keywords that do not match any column names.
+        3. Call the process_columns method of the GraphMaker instance.
+        4. Assert that the returned list of matching column names is empty.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -136,13 +139,17 @@ class Test_GraphMaker_process_columns(unittest.TestCase):
 
     def test_process_columns_partially_matches(self):
         """
-        Test the process_columns method with partial matches.
+        Test if the process_columns method returns the correct list of matching
+        columns when provided with keywords that partially match the column
+        names.
 
-        This test case checks if the process_columns method returns the list of
-        column names that partially match the provided keywords.
-
-        The test passes if the returned list of matching column names contains
-        the columns that partially match the provided keywords.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame
+           and a list of keywords that partially match the column names.
+        3. Call the process_columns method of the GraphMaker instance.
+        4. Assert that the returned list of matching column names is equal to
+           the expected list of matching column names.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -174,12 +181,18 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
            return_value=(MagicMock(), MagicMock()))
     def test_plot_graph_with_columns(self, mock_subplots, mock_show):
         """
-        Test the plot_graph method with provided columns.
+        Test if the plot_graph method plots the graph correctly when provided
+        with column names.
 
-        This test case checks if the plot_graph method plots the graph
-        correctly when provided with a list of columns.
-
-        The test passes if the graph is plotted without any errors.
+        Steps:
+        1. Create a mock for the subplots function.
+        2. Call the plot_graph method of the GraphMaker instance with a list of
+           column names.
+        3. Assert that the ax.plot method was called the correct number of
+           times.
+        4. Assert that the ax.plot method was called with the expected
+           arguments.
+        5. Assert that the show method was called once.
         """
         # Create a mock for the ax object
         mock_fig, mock_ax = mock_subplots.return_value
@@ -195,12 +208,18 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
            return_value=(MagicMock(), MagicMock()))
     def test_plot_graph_with_df(self, mock_subplots, mock_show):
         """
-        Test the plot_graph method with provided dataframe.
+        Test if the plot_graph method plots the graph correctly when provided
+        with a DataFrame.
 
-        This test case checks if the plot_graph method plots the graph
-        correctly when provided with a dataframe.
-
-        The test passes if the graph is plotted without any errors.
+        Steps:
+        1. Create a mock for the subplots function.
+        2. Call the plot_graph method of the GraphMaker instance with a
+           DataFrame.
+        3. Assert that the ax.plot method was called the correct number of
+           times.
+        4. Assert that the ax.plot method was called with the expected
+           arguments.
+        5. Assert that the show method was called once.
         """
         # Create a mock for the ax object
         mock_fig, mock_ax = mock_subplots.return_value
@@ -215,12 +234,17 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
     @patch('matplotlib.pyplot.subplots')
     def test_plot_graph_with_x_y(self, mock_subplots, mock_show):
         """
-        Test the plot_graph method with provided x and y values.
+        Test if the plot_graph method plots the graph correctly when provided
+        with x and y values.
 
-        This test case checks if the plot_graph method plots the graph
-        correctly when provided with x and y values.
-
-        The test passes if the graph is plotted without any errors.
+        Steps:
+        1. Create a mock for the subplots function.
+        2. Call the plot_graph method of the GraphMaker instance with x and y
+           values.
+        3. Assert that the ax.plot method was called once.
+        4. Assert that the ax.plot method was called with the expected
+           arguments.
+        5. Assert that the show method was called once.
         """
         x = [1, 2, 3, 4, 5]
         y = [2, 4, 6, 8, 10]
@@ -239,12 +263,16 @@ class Test_GraphMaker_plot_graph(unittest.TestCase):
            return_value=(MagicMock(), MagicMock()))
     def test_plot_graph_default(self, mock_subplots, mock_show):
         """
-        Test the plot_graph method with default parameters.
+        Test if the plot_graph method plots the graph correctly with default
+        arguments.
 
-        This test case checks if the plot_graph method plots the graph
-        correctly with default parameters.
-
-        The test passes if the graph is plotted without any errors.
+        Steps:
+        1. Create a mock for the subplots function.
+        2. Call the plot_graph method of the GraphMaker instance with default
+           arguments.
+        3. Assert that the ax.plot method was called the correct number of
+           times.
+        4. Assert that the show method was called once.
         """
         # Create a mock for the ax object
         mock_fig, mock_ax = mock_subplots.return_value
@@ -272,13 +300,18 @@ class Test_GraphMaker_run(unittest.TestCase):
 
     def test_run_default_mode(self):
         """
-        Test the run method with default mode.
+        Test if the run method correctly calls the process_columns and
+        plot_graph methods with the correct arguments when the default mode is
+        specified.
 
-        This test case checks if the run method correctly calls the plot_graph
-        method with the processed columns when the default mode is specified.
-
-        The test passes if the plot_graph method is called with the correct
-        arguments.
+        Steps:
+        1. Create a mock for the process_columns method.
+        2. Create a mock for the plot_graph method.
+        3. Call the run method of the GraphMaker instance with the default
+           mode.
+        4. Assert that the process_columns method was called once.
+        5. Assert that the plot_graph method was called once with the correct
+           arguments.
         """
         columns = ['mass', 'distance', 'time', 'energy', 'velocity']
         with patch.object(self.graph_maker, 'process_columns',
@@ -315,12 +348,14 @@ class Test_GraphMaker_run(unittest.TestCase):
 
     def test_run_interactive_mode(self):
         """
-        Test the run method with interactive mode.
+        Test if the run method correctly calls the interactive_mode method when
+        the interactive mode is specified.
 
-        This test case checks if the run method correctly calls the
-        interactive_mode method when the interactive mode is specified.
-
-        The test passes if the interactive_mode method is called.
+        Steps:
+        1. Create a mock for the interactive_mode method.
+        2. Call the run method of the GraphMaker instance with the interactive
+           mode.
+        3. Assert that the interactive_mode method was called once.
         """
         with patch.object(self.graph_maker, 'interactive_mode') as \
              mock_interactive_mode:
@@ -344,12 +379,12 @@ class Test_GraphMaker_run(unittest.TestCase):
 
     def test_run_invalid_mode(self):
         """
-        Test the run method with invalid mode.
+        Test if the run method raises a ValueError when an invalid mode is
+        specified.
 
-        This test case checks if the run method raises a ValueError when an
-        invalid mode is specified.
-
-        The test passes if a ValueError is raised.
+        Steps:
+        1. Call the run method of the GraphMaker instance with an invalid mode.
+        2. Assert that a ValueError is raised.
         """
         with self.assertRaises(ValueError):
             self.graph_maker.run('test')
@@ -358,39 +393,21 @@ class Test_GraphMaker_run(unittest.TestCase):
 class Test_GraphMaker_interactive_mode(unittest.TestCase):
     """
     Test case for the interactive_mode method of the GraphMaker class.
-
-    This test case class contains test methods to verify the behavior of the
-    interactive_mode method in the GraphMaker class. The interactive_mode
-    method allows the user to interactively select quantities to display and
-    how to display them.
-
-    The test methods in this class cover different scenarios such as exiting
-    the program, selecting Display mode, selecting Combine mode, providing
-    invalid input, and selecting keywords that are not found in the data.
-
-    Each test method checks if the interactive_mode method behaves as expected
-    and if the necessary methods and functions are called with the correct
-    arguments.
-
-    Note: The test methods in this class require the GraphMaker class and its
-    dependencies to be properly implemented and imported.
     """
     @patch('builtins.input', side_effect=['exit'])
     @patch('builtins.print')
     def test_interactive_mode_exit(self, mock_print, mock_input):
         """
-        Test the interactive_mode method when the user types "exit".
+        Test if the interactive_mode method exits correctly.
+        The expected behavior is that the interactive_mode method exits when
+        the user types 'exit'.
 
-        This test case checks if the interactive_mode method exits the program
-        when the user types "exit".
-
-        The test passes if the program exits without any errors.
-
-        Args:
-            mock_print (MagicMock): A MagicMock object for mocking the print
-                                    function.
-            mock_input (MagicMock): A MagicMock object for mocking the input
-                                    function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -425,19 +442,17 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         self, mock_plot_graph, mock_print, mock_input
     ):
         """
-        Test the interactive_mode method with Display mode.
+        Test if the interactive_mode method calls the plot_graph method with
+        the correct arguments when the user selects Display mode.
 
-        This test case checks if the interactive_mode method calls the
-        plot_graph method with the correct arguments when the user selects
-        Display mode.
-
-        The test passes if the plot_graph method is called with the correct
-        arguments.
-
-        Args:
-            mock_plot_graph (Mock): The mock object for the plot_graph method.
-            mock_print (Mock): The mock object for the print function.
-            mock_input (Mock): The mock object for the input function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the plot_graph method was called with the correct
+           arguments.
+        5. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -479,19 +494,17 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         self, mock_plot_graph, mock_print, mock_input
     ):
         """
-        Test the interactive_mode method with Combine mode.
+        Test if the interactive_mode method calls the plot_graph method with
+        the correct arguments when the user selects Combine mode.
 
-        This test case checks if the interactive_mode method calls the
-        plot_graph method with the correct arguments when the user selects
-        Combine mode.
-
-        The test passes if the plot_graph method is called with the correct
-        arguments.
-
-        Args:
-            mock_plot_graph (Mock): The mock object for the plot_graph method.
-            mock_print (Mock): The mock object for the print function.
-            mock_input (Mock): The mock object for the input function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the plot_graph method was called with the correct
+           arguments.
+        5. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -533,19 +546,16 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
     @patch('builtins.print')
     def test_interactive_mode_IndexError(self, mock_print, mock_input):
         """
-        Test case for the interactive_mode method when an IndexError occurs.
+        Test if an invalid input is provided to the interactive_mode method.
+        The expected behavior is that the interactive_mode method handles an
+        IndexError correctly when invalid input is provided.
 
-        This test case verifies that the interactive_mode method handles an
-        IndexError correctly.
-        It sets up the necessary data and mocks the print and input functions.
-        Then, it creates an instance of the GraphMaker class with a test
-        DataFrame.
-        Finally, it calls the interactive_mode method and asserts that the
-        expected calls to print and input functions are made.
-
-        Args:
-            mock_print (MagicMock): Mock object for the print function.
-            mock_input (MagicMock): Mock object for the input function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -587,17 +597,16 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
     @patch('builtins.print')
     def test_interactive_mode_ValueError(self, mock_print, mock_input):
         """
-        Test case for the interactive_mode method of the GraphMaker class when
-        a ValueError is raised.
+        Test if an invalid input is provided to the interactive_mode method.
+        The expected behavior is that the interactive_mode method handles a
+        ValueError correctly when invalid input is provided.
 
-        This test case checks if the interactive_mode method correctly handles
-        a ValueError when invalid input is provided.
-
-        Args:
-            mock_print (MagicMock): A MagicMock object for mocking the print
-                                    function.
-            mock_input (MagicMock): A MagicMock object for mocking the input
-                                    function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
@@ -639,14 +648,16 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
     @patch('builtins.print')
     def test_interactive_mode_keyword_not_found(self, mock_print, mock_input):
         """
-        Test case for the interactive_mode method when a keyword is not found.
+        Test if a keyword is not found in the interactive_mode method.
+        The expected behavior is that the interactive_mode method handles a
+        keyword not found error correctly.
 
-        This test case checks if the interactive_mode method handles the
-        scenario when a keyword is not found in the DataFrame.
-
-        Args:
-            mock_print (MagicMock): A mock object for the print function.
-            mock_input (MagicMock): A mock object for the input function.
+        Steps:
+        1. Create a test DataFrame with sample data and column names.
+        2. Create an instance of the GraphMaker class with the test DataFrame.
+        3. Call the interactive_mode method of the GraphMaker instance.
+        4. Assert that the print and input functions were called with the
+           expected arguments.
         """
         data = [[1, 2, 3, 4, 5]]
         keywords = ['mass', 'distance', 'time', 'energy', 'velocity']

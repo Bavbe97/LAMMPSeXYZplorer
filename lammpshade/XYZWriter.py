@@ -11,6 +11,7 @@ specified output file.
 class XYZWriter:
     """
     A class used to write data in XYZ format to a specified output file.
+    Can be used as a context manager to open and close the output file.
 
     ...
 
@@ -21,11 +22,51 @@ class XYZWriter:
 
     Methods
     -------
+    __init__(filepath)
+        Initializes the XYZWriter object with the specified output file path.
+    __enter__()
+        Opens the output file for writing when the object is used as a context
+        manager.
+    __exit__()
+        Closes the output file when the object is used as a context manager.
     write_to_xyz(step)
         Writes data in XYZ format to the output file.
+    check_step_data(step)
+        Checks if the required data is present in the step dictionary.
+    check_write_natoms(step)
+        Writes the number of atoms to the output file.
+    process_and_write_thermo_data(step)
+        Processes and writes thermo data to the output file.
+    process_thermo_data(step)
+        Processes thermo data to be written to the output file.
+    write_thermo_data(thermo_data)
+        Writes thermo data to the output file.
+    process_box_data(step, thermo_data)
+        Processes box data to be written to the output file.
+    create_and_write_atom_data(step)
+        Creates a DataFrame from the atom data and writes it to the output file.
+    process_atom_data_df(atoms_df)
+        Processes the atom data DataFrame to match the required format.
+    data_check(step, keys, data_type)
+        Checks if the required keys are present in the step dictionary.
     """
 
     def __init__(self, filepath):
+        """
+        Initializes the XYZWriter object with the specified output file path.
+
+        Parameters
+        ----------
+        filepath : str
+            The path to the output file where the data will be written.
+            If only the filename is given, the file will be created in the
+            "./xyz/" subdirectory.
+
+        Raises
+        ------
+        ValueError
+            If the file format is not .xyz.
+        """
         # Check if the file ends with the right format (.xyz)
         if not filepath.lower().endswith('.xyz'):
             raise ValueError("File format must be .xyz")
@@ -44,7 +85,7 @@ class XYZWriter:
         Opens the output file for writing when the object is used as a context
         manager.
         If the output file does not exists, it will be created.
-        If the output file exists, the new data will be appended to it.
+        If the output file is already written, it will be opened in append mode.
         """
         mode = 'a' if self.has_written else 'w'
         os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
@@ -70,11 +111,6 @@ class XYZWriter:
             should AT LEAST contain the following keys:
             {
                 'natoms': <number of atoms>,
-                'box': <box data>
-                'thermo': {
-                    'keywords': <list of keywords>,
-                    'data': <corresponding data for each keyword>
-                },
                 'keywords': <list of atom keywords>,
                 'data': <list of lists containing atom data>
             }
@@ -142,7 +178,8 @@ class XYZWriter:
 
     def process_and_write_thermo_data(self, step):
         """
-        Processes and writes thermo data to the output file.
+        If thermo data is available, processes and writes it to the output file.
+        If thermo data is not found, a newline character is written to the file.
 
         Parameters
         ----------
@@ -176,6 +213,7 @@ class XYZWriter:
     def process_thermo_data(self, step):
         """
         Processes thermo data to be written to the output file.
+        If thermo data is not found, a message is printed to the console.
 
         Parameters
         ----------
@@ -329,7 +367,8 @@ class XYZWriter:
         Returns
         -------
         atoms_df : DataFrame
-            A DataFrame containing the filtered atom data."""
+            A DataFrame containing the filtered atom data.
+        """
         # List of keywords to be used for reordering the DataFrame columns
         keywords_lst = ['element', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy',
                         'fz', 'type']
@@ -349,6 +388,11 @@ class XYZWriter:
             A dictionary containing the data to be written to the file.
         keys : list
             A list of keys that should be present in the step dictionary.
+
+        Returns
+        -------
+        bool
+            True if the required keys are present in the step dictionary.
 
         Raises
         ------

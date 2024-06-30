@@ -307,6 +307,75 @@ class Test_Simulation_get_thermodata(unittest.TestCase):
                 self.assertAlmostEqual(value1, data2[j], 10)
 
 
+class Test_Simulation_get_step_thermodata(unittest.TestCase):
+    """
+    Test the get_step_thermodata method of Simulation
+    """
+    def test_get_step_thermodata(self):
+        """
+        Test if the get_step_thermodata method returns the expected thermo data
+        for a given step.
+        The expected behavior is that the method returns the expected thermo
+        data for the specified step and returns True.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Create a step dictionary with thermo data.
+        3. Call the get_step_thermodata method with the step dictionary.
+        4. Assert that the thermo_data attribute of the Simulation object is
+           the same as the expected data.
+        5. Assert that the method returns True.
+        """
+        step = {'thermo': {'keywords': ['Step', 'Time', 'c_temp', 'v_vel',
+                                        'v_force', 'test'],
+                           'data': [0, 1, 6, -11.3, 999, 'test']}}
+        check_thermo_data = [[0, 1, 6, -11.3, 999, 'test']]
+
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        thermo_flag = test.get_step_thermodata(step)
+        thermo_data = test.thermo_data
+        self.assertTrue(thermo_data == check_thermo_data)
+        self.assertTrue(thermo_flag)
+
+    def test_get_step_thermodata_no_thermo_data(self):
+        """
+        Test if the get_step_thermodata method returns False when no thermo
+        data is present in the step dictionary.
+        The expected behavior is that the method returns False.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Create a step dictionary without thermo data.
+        3. Call the get_step_thermodata method with the step dictionary.
+        4. Assert that the method returns False.
+        """
+        step = {'thermo': {'keywords': ['Step', 'Time', 'c_temp', 'v_vel',
+                                        'v_force', 'test'],
+                           'data': []}}
+
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        thermo_flag = test.get_step_thermodata(step)
+        self.assertFalse(thermo_flag)
+
+    def test_get_step_thermodata_no_thermo_keywords(self):
+        """
+        Test if the get_step_thermodata method returns False when no thermo
+        keywords are present in the step dictionary.
+        The expected behavior is that the method returns False.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Create a step dictionary without thermo keywords.
+        3. Call the get_step_thermodata method with the step dictionary.
+        4. Assert that the method returns False.
+        """
+        step = {'thermo': {'data': [0, 1, 6, -11.3, 999, 'test']}}
+
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        thermo_flag = test.get_step_thermodata(step)
+        self.assertFalse(thermo_flag)
+
+
 class Test_Simulation_make_graphs(unittest.TestCase):
     """
     Test the make_graphs method of Simulation

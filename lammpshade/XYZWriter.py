@@ -161,12 +161,12 @@ class XYZWriter:
 
         if self.thermo_check[0] is True:
             # Process thermo data
-            thermo_check, thermo_data = self.process_thermo_data(step)
+            self.thermo_check, thermo_data = self.process_thermo_data(step)
 
         if self.thermo_check[1] is True:
             # Process box data
-            thermo_check, thermo_data = self.process_box_data(step,
-                                                              thermo_data)
+            self.thermo_check, thermo_data = self.process_box_data(step,
+                                                                   thermo_data)
 
         # Write thermo data
         self.write_thermo_data(thermo_data)
@@ -276,14 +276,22 @@ class XYZWriter:
             self.thermo_check[1] = False
 
         if 'box' in step and self.thermo_check[0] is True:
-            # Find the index of 'Time=' in the string
-            index = thermo_data.index('Time=')
-            index = index + thermo_data[index:].index(';') + 1
+            try:
+                # Find the index of 'Time=' in the string
+                index = thermo_data.index('Time=')
+                index = index + thermo_data[index:].index(';') + 1
 
-            # Insert box data into the string
-            thermo_data = (thermo_data[:index] + ' Box=' +
-                           str(step['box'])[1:-1] + ';' +
-                           thermo_data[index:])
+                # Insert box data into the string
+                thermo_data = (thermo_data[:index] + ' Box=' +
+                               str(step['box'])[1:-1] + ';' +
+                               thermo_data[index:])
+
+            except Exception:
+                # If 'Time' is not found in the string
+                print('Time was not found in thermo_data\n' +
+                      'Program will continue without thermo_data')
+                self.thermo_check[0] = False
+                self.thermo_check[1] = False
 
         return self.thermo_check, thermo_data
 
@@ -347,6 +355,11 @@ class XYZWriter:
         KeyError
             If the required keys are not found in the step dictionary.
         """
+        data_check = True
         for key in keys:
             if key not in step:
+                data_check = False
                 raise KeyError(f"'{data_type}' not found in step.")
+        
+        if data_check:
+            return True

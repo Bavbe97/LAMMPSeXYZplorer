@@ -165,9 +165,13 @@ class Simulation:
                 return thermo_flag
             else:
                 # Append thermo data to the thermo_data attribute
-                self.thermo_data = []
-                self.thermo_data.append(step['thermo']['data'])
-                return thermo_flag
+                if not step['thermo']['data'] or step['thermo']['data'] == []:
+                    thermo_flag = False
+                    return thermo_flag
+                else:
+                    self.thermo_data = []
+                    self.thermo_data.append(step['thermo']['data'])
+                    return thermo_flag
         else:
             # Append thermo data to the thermo_data attribute
             self.thermo_data.append(step['thermo']['data'])

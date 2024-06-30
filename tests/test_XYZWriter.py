@@ -351,6 +351,154 @@ class Test_XYZWriter_write_to_xyz(unittest.TestCase):
         self.assertIn('N 0.3 0.31 0.4 5 0.6 77 -88.8 test 0 0\n', content)
 
 
+class Test_XYZWriter_check_write_natoms(unittest.TestCase):
+    """
+    Test the write_natoms method of the XYZWriter class.
+    """
+    def setUp(self):
+        """
+        Create a list of files that will be created during testing.
+        The files will be created in the 'xyz' directory in the current
+        working directory.
+
+        Check if the files already exist and raise an error if they do.
+        """
+        self.created_files = []
+        filename = "test.xyz"
+        self.created_files.append(os.path.join(os.getcwd(), 'xyz', filename))
+
+        for file_path in self.created_files:
+            assert not os.path.exists(file_path), ("File already exists: " +
+                                                   file_path)
+
+    def tearDown(self):
+        """
+        Remove the files created during testing.
+        Remove the 'output' directory if it's empty.
+        """
+        # Clean up only the files created during testing
+        for file_path in self.created_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        # Remove the 'output' directory if it's empty
+        output_dir = os.path.join(os.getcwd(), 'xyz')
+        if os.path.exists(output_dir) and not os.listdir(output_dir):
+            os.rmdir(output_dir)
+
+    def test_write_natoms(self):
+        """
+        Test if the number of atoms is written to the file in the correct
+        format.
+        The expected behavior is to write the number of atoms in a single line.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file.
+        3. Check if the number of atoms is written to the file in the correct
+           format.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {'natoms': 10}
+        with out as out:
+            out.check_write_natoms(step)
+        with open(file_path, 'r') as file:
+            content = file.readlines()
+        self.assertIn('10\n', content)
+
+    def test_no_natoms(self):
+        """
+        Test if the number of atoms is not provided.
+        The expected behavior is to raise a KeyError.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file without providing the number
+           of atoms.
+        3. Check if a KeyError is raised.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {}
+        with out as out:
+            with self.assertRaises(KeyError):
+                out.check_write_natoms(step)
+
+    def test_list_natoms(self):
+        """
+        Test if the number of atoms is provided as a list.
+        The expected behavior is to raise a TypeError.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file as a list.
+        3. Check if a TypeError is raised.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {'natoms': [10]}
+        with out as out:
+            with self.assertRaises(TypeError):
+                out.check_write_natoms(step)
+
+    def test_string_natoms(self):
+        """
+        Test if the number of atoms is provided as a string.
+        The expected behavior is to raise a TypeError.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file as a string.
+        3. Check if a TypeError is raised.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {'natoms': '10'}
+        with out as out:
+            with self.assertRaises(TypeError):
+                out.check_write_natoms(step)
+
+    def test_float_natoms(self):
+        """
+        Test if the number of atoms is provided as a float.
+        The expected behavior is to raise a TypeError.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file as a float.
+        3. Check if a TypeError is raised.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {'natoms': 10.546}
+        with out as out:
+            with self.assertRaises(TypeError):
+                out.check_write_natoms(step)
+
+    def test_negative_natoms(self):
+        """
+        Test if the number of atoms is provided as a negative integer.
+        The expected behavior is to raise a ValueError.
+
+        Steps:
+        1. Initialize the XYZWriter class with a filename.
+        2. Write the number of atoms to the file as a negative integer.
+        3. Check if a ValueError is raised.
+        """
+        filename = 'test.xyz'
+        file_path = os.path.join(os.getcwd(), 'xyz', filename)
+        out = XYZWriter(file_path)
+        step = {'natoms': -10}
+        with out as out:
+            with self.assertRaises(TypeError):
+                out.check_write_natoms(step)
+
+
 class Test_XYZWriter_contest_manager(unittest.TestCase):
     """
     Test the context manager of the XYZWriter class.

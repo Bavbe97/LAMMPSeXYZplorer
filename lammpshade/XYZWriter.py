@@ -33,7 +33,7 @@ class XYZWriter:
         Writes data in XYZ format to the output file.
     check_step_data(step)
         Checks if the required data is present in the step dictionary.
-    check_write_natoms(step)
+    process_and_write_natoms(step)
         Writes the number of atoms to the output file.
     process_and_write_thermo_data(step)
         Processes and writes thermo data to the output file.
@@ -126,7 +126,7 @@ class XYZWriter:
         self.check_step_data(step)
 
         # Write number of atoms to .xyz output file
-        self.check_write_natoms(step)
+        self.process_and_write_natoms(step)
 
         # Attempt to process and write thermo data to .xyz output file
         if self.thermo_check[0] is True:
@@ -160,7 +160,7 @@ class XYZWriter:
         self.data_check(step['keywords'], ['element', 'x', 'y', 'z'],
                         ' atoms coordinates')
 
-    def check_write_natoms(self, step):
+    def process_and_write_natoms(self, step):
         """
         Writes the number of atoms to the specified output file.
 
@@ -177,6 +177,8 @@ class XYZWriter:
         ------
         KeyError
             If the number of atoms is not found in the step dictionary.
+        TypeError
+            If the number of atoms is not a positive integer.
         """
         # Attempt to write number of atoms to .xyz output file
         if 'natoms' not in step:

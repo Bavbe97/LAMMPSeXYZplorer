@@ -369,7 +369,7 @@ class Test_XYZWriter_write_to_xyz(unittest.TestCase):
         self.assertIn('N 0.3 0.31 0.4 5 0.6 77 -88.8 test 0 0\n', content)
 
 
-class Test_XYZWriter_check_write_natoms(unittest.TestCase):
+class Test_XYZWriter_process_and_write_natoms(unittest.TestCase):
     """
     Test the write_natoms method of the XYZWriter class.
     """
@@ -429,7 +429,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         out = XYZWriter(file_path)
         step = {'natoms': 10}
         with out as out:
-            out.check_write_natoms(step)
+            out.process_and_write_natoms(step)
         with open(file_path, 'r') as file:
             content = file.readlines()
         self.assertIn('10\n', content)
@@ -451,7 +451,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         step = {}
         with out as out:
             with self.assertRaises(KeyError):
-                out.check_write_natoms(step)
+                out.process_and_write_natoms(step)
 
     def test_list_natoms(self):
         """
@@ -469,7 +469,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         step = {'natoms': [10]}
         with out as out:
             with self.assertRaises(TypeError):
-                out.check_write_natoms(step)
+                out.process_and_write_natoms(step)
 
     def test_string_natoms(self):
         """
@@ -487,7 +487,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         step = {'natoms': '10'}
         with out as out:
             with self.assertRaises(TypeError):
-                out.check_write_natoms(step)
+                out.process_and_write_natoms(step)
 
     def test_float_natoms(self):
         """
@@ -505,7 +505,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         step = {'natoms': 10.546}
         with out as out:
             with self.assertRaises(TypeError):
-                out.check_write_natoms(step)
+                out.process_and_write_natoms(step)
 
     def test_negative_natoms(self):
         """
@@ -523,7 +523,7 @@ class Test_XYZWriter_check_write_natoms(unittest.TestCase):
         step = {'natoms': -10}
         with out as out:
             with self.assertRaises(TypeError):
-                out.check_write_natoms(step)
+                out.process_and_write_natoms(step)
 
 
 class Test_XYZWriter_process_thermo_data(unittest.TestCase):

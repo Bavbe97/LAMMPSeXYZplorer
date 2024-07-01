@@ -528,9 +528,15 @@ class Test_Simulation_make_graphs(unittest.TestCase):
         mock_interactive_mode.assert_called_once()
 
     def test_make_graphs_ValueError(self):
-        """GIVEN a Simulation object
-        WHEN calling the make_graphs method with an invalid mode
-        THEN it should raise a ValueError"""
+        """
+        Test if the make_graphs method raises a ValueError when an invalid mode
+        is provided.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the make_graphs method with an invalid mode.
+        3. Assert that a ValueError is raised.
+        """
         test = Simulation(os.path.join('tests', 'test.yaml'))
         with self.assertRaises(ValueError):
             test.make_graphs(mode='test')

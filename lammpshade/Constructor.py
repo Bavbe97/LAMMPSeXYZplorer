@@ -170,30 +170,6 @@ class Simulation:
             thermo_flag = False
             return thermo_flag
 
-        """# Attempt to get thermo data from the step
-            try:
-                self.thermo_keywords = []
-                self.thermo_keywords = step['thermo']['keywords']
-            except Exception:
-                # No thermo data found in the step
-                thermo_flag = False
-                # Return thermo_flag to indicate no thermo data found
-                return thermo_flag
-            else:
-                # Check if thermo data is empty
-                if not step['thermo']['data'] or step['thermo']['data'] == []:
-                    thermo_flag = False
-                    return thermo_flag
-                # Append thermo data to the thermo_data attribute
-                else:
-                    self.thermo_data = []
-                    self.thermo_data.append(step['thermo']['data'])
-                    return thermo_flag
-        else:
-            # Append thermo data to the thermo_data attribute
-            self.thermo_data.append(step['thermo']['data'])
-            return thermo_flag"""
-
     def check_thermo_data(self, step):
         """
         Checks if thermo data is available in the simulation step data

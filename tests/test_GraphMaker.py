@@ -394,6 +394,16 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
     """
     Test case for the interactive_mode method of the GraphMaker class.
     """
+
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        self.test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(self.test_df)
+
     @patch('builtins.input', side_effect=['exit'])
     @patch('builtins.print')
     def test_interactive_mode_exit(self, mock_print, mock_input):
@@ -409,8 +419,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         4. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, distance, '
@@ -426,9 +434,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
             call('Exiting the loop...')
         ]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_input.assert_called_with(
             'Select which quantities to display and how: '
@@ -454,8 +460,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         5. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, '
@@ -479,10 +483,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
             call('Exiting the loop...')
             ]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_print.assert_has_calls(calls, any_order=False)
         mock_plot_graph.assert_called_with(['energy'])
@@ -506,8 +507,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         5. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, '
@@ -531,10 +530,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
             call('Exiting the loop...')
             ]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_print.assert_has_calls(calls, any_order=False)
         mock_input.assert_called_with(
@@ -557,8 +553,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         4. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, distance, '
@@ -583,10 +577,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
             call('Exiting the loop...')
             ]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_input.assert_called_with(
             'Select which quantities to display and how: '
@@ -608,8 +599,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         4. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, distance, '
@@ -634,10 +623,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
             call('Exiting the loop...')
             ]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_input.assert_called_with(
             'Select which quantities to display and how: '
@@ -659,8 +645,6 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
         4. Assert that the print and input functions were called with the
            expected arguments.
         """
-        data = [[1, 2, 3, 4, 5]]
-        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
 
         calls = [
             call('The following quantities have been found: mass, distance, '
@@ -673,9 +657,7 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
                  ' Quantity" data plotted separately'),
             call('Combine - Displays a single figure with all "Time vs. '
                  'Quantity" data plotted together.'),
-            call('Error: miss not found'),
-            call('Error: test not found'),
-            call('Invalid selection, try again.'),
+            call('Invalid keywords, try again.'),
             call('Define printing settings:'),
             call('Input format: mode [q_name1, q_name2, q_name3]'),
             call('To exit the program type: "exit"'),
@@ -686,15 +668,228 @@ class Test_GraphMaker_interactive_mode(unittest.TestCase):
                  'Quantity" data plotted together.'),
             call('Exiting the loop...')]
 
-        test_df = pd.DataFrame(data, columns=keywords)
-        graph_maker = GraphMaker(test_df)
-
-        graph_maker.interactive_mode()
+        self.graph_maker.interactive_mode()
 
         mock_input.assert_called_with(
             'Select which quantities to display and how: '
             )
         mock_print.assert_has_calls(calls, any_order=False)
+
+
+class Test_GraphMaker_check_and_process_input(unittest.TestCase):
+    """
+    Test case for the check_and_process_input method of the GraphMaker class.
+    """
+
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(test_df)
+
+    def test_valid_input(self):
+        """
+        Test if the method correctly processes valid input.
+        The expected behavior is that the method returns True for input_check,
+        the correct mode, and the list of keywords.
+
+        Steps:
+        1. Create a valid input string.
+        2. Call the check_and_process_input method of the GraphMaker instance
+           with the valid input string.
+        3. Assert that the returned values are correct.
+        """
+        graph_input = "display [mass, energy, velocity]"
+        expected_mode = "display"
+        expected_keywords = ["mass", "energy", "velocity"]
+
+
+        input_check, mode, keywords_list = self.graph_maker.check_and_process_input(graph_input)
+
+        self.assertTrue(input_check)
+        self.assertEqual(mode, expected_mode)
+        self.assertEqual(keywords_list, expected_keywords)
+
+    def test_invalid_input_missing_brackets(self):
+        """
+        Test if the method correctly handles input with missing brackets.
+        The expected behavior is that the method returns False for input_check
+        and an empty list for keywords_list.
+
+        Steps:
+        1. Create an input string with missing brackets.
+        2. Call the check_and_process_input method of the GraphMaker instance
+           with the input string.
+        3. Assert that the returned values are correct.
+        """
+        graph_input = "display mass, energy, velocity"
+
+        input_check, mode, keywords_list = self.graph_maker.check_and_process_input(graph_input)
+
+        self.assertFalse(input_check)
+        self.assertEqual(keywords_list, [])
+
+    def test_invalid_input_empty_keywords(self):
+        """
+        Test if the method correctly handles input with empty keywords.
+        The expected behavior is that the method returns True for input_check,
+        the correct mode, and a list with an empty string for keywords_list.
+
+        Steps:
+        1. Create an input string with empty keywords.
+        2. Call the check_and_process_input method of the GraphMaker instance
+           with the input string.
+        3. Assert that the returned values are correct.
+        """
+        graph_input = "display []"
+        expected_mode = "display"
+        expected_keywords = ['']
+
+        input_check, mode, keywords_list = self.graph_maker.check_and_process_input(graph_input)
+
+        self.assertTrue(input_check)
+        self.assertEqual(mode, expected_mode)
+        self.assertEqual(keywords_list, expected_keywords)
+
+    def test_invalid_input_missing_mode(self):
+        """
+        Test if the method correctly handles input with missing mode.
+        The expected behavior is that the method returns True for input_check
+        and an empty list for keywords_list.
+
+        Steps:
+        1. Create an input string with missing mode.
+        2. Call the check_and_process_input method of the GraphMaker instance
+           with the input string.
+        3. Assert that the returned values are correct.
+        """
+        graph_input = "[mass, energy, velocity]"
+
+        input_check, mode, keywords_list = self.graph_maker.check_and_process_input(graph_input)
+
+        self.assertTrue(input_check)
+        self.assertEqual(keywords_list, ['mass', 'energy', 'velocity'])
+
+    def test_invalid_input_missing_mode_and_brackets(self):
+        """
+        Test if the method correctly handles input with missing mode and brackets.
+        The expected behavior is that the method returns False for input_check
+        and an empty list for keywords_list.
+
+        Steps:
+        1. Create an input string with missing mode and brackets.
+        2. Call the check_and_process_input method of the GraphMaker instance
+           with the input string.
+        3. Assert that the returned values are correct.
+        """
+        graph_input = "mass, energy, velocity"
+
+        input_check, mode, keywords_list = self.graph_maker.check_and_process_input(graph_input)
+
+        self.assertFalse(input_check)
+        self.assertEqual(keywords_list, [])
+
+
+class Test_GraphMaker_check_keywords(unittest.TestCase):
+    """
+    Test case for the check_keywords method of the GraphMaker class.
+    """
+
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        self.test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(self.test_df)
+
+    def test_check_keywords_valid(self):
+        """
+        Test if the check_keywords method returns True for valid keywords.
+        The expected behavior is that the method returns True when provided
+        with a list of keywords that exist as columns in the DataFrame.
+
+        Steps:
+        1. Create a list of valid keywords.
+        2. Call the check_keywords method of the GraphMaker instance with the
+           list of valid keywords.
+        3. Assert that the returned value is True.
+        """
+        valid_keywords = ['mass', 'distance', 'time']
+        self.assertTrue(self.graph_maker.check_keywords(valid_keywords))
+
+    def test_check_keywords_invalid(self):
+        """
+        Test if the check_keywords method returns False for invalid keywords.
+        The expected behavior is that the method returns False when provided
+        with a list of keywords that do not exist as columns in the DataFrame.
+
+        Steps:
+        1. Create a list of invalid keywords.
+        2. Call the check_keywords method of the GraphMaker instance with the
+           list of invalid keywords.
+        3. Assert that the returned value is False.
+        """
+        invalid_keywords = ['force', 'pressure', 'temperature']
+        self.assertFalse(self.graph_maker.check_keywords(invalid_keywords))
+
+
+class Test_GraphMaker_select_graph_mode(unittest.TestCase):
+    """
+    Test case for the select_graph_mode method of the GraphMaker class.
+    """
+
+    def setUp(self):
+        """
+        Set up test data and objects.
+        """
+        data = [[1, 2, 3, 4, 5]]
+        keywords = ['mass', 'distance', 'time', 'energy', 'velocity']
+        self.test_df = pd.DataFrame(data, columns=keywords)
+        self.graph_maker = GraphMaker(self.test_df)
+
+    @patch.object(GraphMaker, 'plot_graph')
+    def test_select_graph_mode_display(self, mock_plot_graph):
+        """
+        Test if the select_graph_mode method calls the plot_graph method with
+        the correct arguments when the mode is 'display'.
+
+        Steps:
+        1. Create an instance of the GraphMaker class with a test DataFrame.
+        2. Call the select_graph_mode method with mode='display' and a list of
+           keywords.
+        3. Assert that the plot_graph method is called with each keyword in the
+           list of keywords.
+        """
+        keywords_list = ['mass', 'energy', 'velocity']
+        self.graph_maker.select_graph_mode('display', keywords_list)
+        expected_calls = [call(['mass']), call(['energy']), call(['velocity'])]
+        mock_plot_graph.assert_has_calls(expected_calls)
+
+    @patch.object(GraphMaker, 'plot_graph')
+    def test_select_graph_mode_combine(self, mock_plot_graph):
+        """
+        Test if the select_graph_mode method calls the plot_graph method with
+        the correct arguments when the mode is 'combine'.
+
+        Steps:
+        1. Create an instance of the GraphMaker class with a test DataFrame.
+        2. Call the select_graph_mode method with mode='combine' and a list of
+           keywords.
+        3. Assert that the plot_graph method is called with the list of
+           keywords.
+        """
+        keywords_list = ['mass', 'energy', 'velocity']
+        self.graph_maker.select_graph_mode('combine', keywords_list)
+        mock_plot_graph.assert_called_once_with(keywords_list)
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 if __name__ == '__main__':

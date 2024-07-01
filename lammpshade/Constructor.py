@@ -154,7 +154,23 @@ class Simulation:
         """
         thermo_flag = True
         if self.thermo_keywords is None:
-            # Attempt to get thermo data from the step
+            # Check if thermo data is available in the step
+            thermo_flag = self.check_thermo_data(step)
+
+            if thermo_flag:
+                # Get thermo keywords from the step
+                self.thermo_keywords = step['thermo']['keywords']
+                self.thermo_data = []
+
+        if thermo_flag:
+            self.thermo_data.append(step['thermo']['data'])
+            return thermo_flag
+
+        else:
+            thermo_flag = False
+            return thermo_flag
+
+        """# Attempt to get thermo data from the step
             try:
                 self.thermo_keywords = []
                 self.thermo_keywords = step['thermo']['keywords']
@@ -164,10 +180,11 @@ class Simulation:
                 # Return thermo_flag to indicate no thermo data found
                 return thermo_flag
             else:
-                # Append thermo data to the thermo_data attribute
+                # Check if thermo data is empty
                 if not step['thermo']['data'] or step['thermo']['data'] == []:
                     thermo_flag = False
                     return thermo_flag
+                # Append thermo data to the thermo_data attribute
                 else:
                     self.thermo_data = []
                     self.thermo_data.append(step['thermo']['data'])
@@ -175,7 +192,33 @@ class Simulation:
         else:
             # Append thermo data to the thermo_data attribute
             self.thermo_data.append(step['thermo']['data'])
-            return thermo_flag
+            return thermo_flag"""
+
+    def check_thermo_data(self, step):
+        """
+        Checks if thermo data is available in the simulation step data
+        and if the thermo data has the same length.
+
+        Parameters
+        ----------
+        step : dict
+            The simulation step data.
+
+        Returns
+        -------
+        bool
+            True if thermo data is available and has the same length.
+            False if thermo data is not available or has different lengths.
+        """
+        try:
+            thermo_keywords = step['thermo']['keywords']
+            thermo_data = step['thermo']['data']
+        except KeyError:
+            return False
+        else:
+            if len(thermo_keywords) != len(thermo_data):
+                return False
+            return True
 
     def make_graphs(self, mode='display'):
         """

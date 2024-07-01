@@ -136,7 +136,7 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
         test.convert_to_xyz(output_path)
-        self.assertEqual(test.thermo_keywords, [])
+        self.assertIsNone(test.thermo_keywords)
         self.assertIsNone(test.thermo_data)
 
     def test_convert_to_xyz_empty_file(self):
@@ -379,6 +379,54 @@ class Test_Simulation_get_step_thermodata(unittest.TestCase):
         test = Simulation(os.path.join('tests', 'test.yaml'))
         thermo_flag = test.get_step_thermodata(step)
         self.assertFalse(thermo_flag)
+
+
+class Test_Simulation_check_thermo_data(unittest.TestCase):
+    """
+    Test the check_thermo_data method of Simulation
+    """
+    def test_check_thermo_data(self):
+        """
+        Test if the thermo data is present in the Simulation object.
+        The expected behavior is that the method returns True.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the check_thermo_data method.
+        3. Assert that the method returns True.
+        """
+        test = Simulation(os.path.join('tests', 'test.yaml'))
+        step = test.file.get_next_step()
+        self.assertTrue(test.check_thermo_data(step))
+
+    def test_check_thermo_data_no_thermo_data(self):
+        """
+        Test if the thermo data is not present in the Simulation object.
+        The expected behavior is that the method returns False.
+
+        Steps:
+        1. Create a Simulation object with a file that does not contain thermo
+           data.
+        2. Call the check_thermo_data method.
+        3. Assert that the method returns False.
+        """
+        test = Simulation(os.path.join('tests', 'test_nothermo.yaml'))
+        step = test.file.get_next_step()
+        self.assertFalse(test.check_thermo_data(step))
+
+    def test_check_thermo_data_empty_file(self):
+        """
+        Test if the file is empty.
+        The expected behavior is that the method returns False.
+
+        Steps:
+        1. Create a Simulation object with an empty file.
+        2. Call the check_thermo_data method.
+        3. Assert that the method returns False.
+        """
+        test = Simulation(os.path.join('tests', 'test_empty.yaml'))
+        step = test.file.get_next_step()
+        self.assertFalse(test.check_thermo_data(step))
 
 
 class Test_Simulation_make_graphs(unittest.TestCase):

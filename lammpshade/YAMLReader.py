@@ -45,10 +45,13 @@ class YAMLReader:
         FileNotFoundError
             If the specified file is not found.
         """
-        self.filename = filename
-        self.current_step = None
+        self.filename = filename  # Path to the YAML file
+        self.current_step = None  # Data from the current step
         try:
+            # Open the file
             self.file = open(filename, 'r')
+        
+        # Handle FileNotFoundError
         except FileNotFoundError:
             raise FileNotFoundError(f"File '{filename}' not found.")
 

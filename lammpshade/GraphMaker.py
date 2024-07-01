@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-
+# Constants for the units mapping
 UNITS_MAPPING = {
             'real': {
                     'mass': r'(g/mol)',
@@ -61,6 +61,14 @@ class GraphMaker:
         Runs the GraphMaker in the specified mode.
     interactive_mode()
         Enters the interactive mode for the graph maker.
+    print_info()
+        Prints information about the inputs of the interactive mode.
+    check_and_process_input(graph_input)
+        Checks and processes the input provided by the user.
+    check_keywords(keywords_list)
+        Checks if the keywords provided are valid.
+    select_graph_mode(mode, keywords_list)
+        Selects the graph mode based on the user input.
     """
 
     def __init__(self, df, keywords_list=None):
@@ -79,10 +87,12 @@ class GraphMaker:
         ValueError
             If df is empty.
         """
+        # Check if the DataFrame is empty
         if df.empty:
             raise ValueError('Data cannot be empty')
-        self.df = df
-        self.keywords_list = keywords_list
+
+        self.df = df  # DataFrame containing data
+        self.keywords_list = keywords_list  # List of keywords
 
     def process_columns(self):
         """
@@ -130,17 +140,23 @@ class GraphMaker:
         -------
         None
         """
+        # Initialize the plot
         fig, ax = plt.subplots()
+
         if x is not None and y is not None:
+            # Plot the graph with the provided x and y values
             ax.plot(x, y)  # pragma: no cover
         else:
+            # Plot the graph based on the columns
             df = df if df is not None else self.df
             if columns != []:
                 for column in columns:
+                    # Plot the data with the specified columns
                     ax.plot(df['Time'], df[column])  # pragma: no cover
             else:
                 for column in df.columns:
                     if column != 'Time':
+                        # Plot the data with all columns except 'Time'
                         ax.plot(df['Time'], df[column])  # pragma: no cover
         plt.show()  # pragma: no cover
 
@@ -218,7 +234,8 @@ class GraphMaker:
             if not input_check:
                 print('Invalid input, try again.')
                 continue
-
+            
+            # Check if keywords are valid
             if input_check:
                 keyword_check = self.check_keywords(keywords_list)
 
@@ -226,7 +243,8 @@ class GraphMaker:
             if not keyword_check:
                 print('Invalid keywords, try again.')
                 continue
-
+            
+            # If input is valid, run the GraphMaker
             if keyword_check:
                 self.select_graph_mode(mode, keywords_list)
 
@@ -273,8 +291,6 @@ class GraphMaker:
         """
 
         input_check = True
-
-        # Obtain input by user
 
         # Get data from input
         graph_input = graph_input.replace(' ', '').split('[')

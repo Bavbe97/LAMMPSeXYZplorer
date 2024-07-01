@@ -185,9 +185,11 @@ class XYZWriter:
             raise KeyError("Number of atoms is not found in the step" +
                            "dictionary\n" +
                            "Program will be terminated")
+
         if not isinstance(step['natoms'], int) or step['natoms'] < 0:
             raise TypeError("Number of atoms must be a positive integer\n" +
                             "Program will be terminated")
+
         else:
             self.output.write(str(step['natoms']) + '\n')
 

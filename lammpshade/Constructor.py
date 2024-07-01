@@ -58,9 +58,9 @@ class Simulation:
             If the file is not found.
 
         """
-        self.file = YAMLReader(filepath)
-        self.thermo_keywords = None
-        self.thermo_data = None
+        self.file = YAMLReader(filepath)  # Create YAMLReader object
+        self.thermo_keywords = None  # Thermo keywords of the simulation data
+        self.thermo_data = None  # Thermo data of the simulation data
 
     def convert_to_xyz(self, output, thermo_flag=True):
         """
@@ -78,17 +78,27 @@ class Simulation:
         ------
         None
         """
-        i = 0
+        i = 0  # Counter for the number of steps processed
+
+        # Create XYZWriter object
         self.output = XYZWriter(output)
         with self.output as out:
             while True:
+                # Get the next step
                 step = self.file.get_next_step()
                 if not step:
+                    # End of file
                     break
                 if thermo_flag:
+                    # Get thermo data from the step
                     thermo_flag = self.get_step_thermodata(step)
+                
+                # Write the step to the output file
                 out.write_to_xyz(step)
+
+                # Print the step number
                 print('Step n. ', i, ' processed')
+                # Increment the step counter
                 i += 1
 
     def get_thermodata(self):
@@ -103,31 +113,44 @@ class Simulation:
         None :
             If no thermo data is found.
         """
-        i = 0
-        thermo_flag = True
+        i = 0 # Counter for the number of steps processed
+        thermo_flag = True # Flag for thermo data availability
+
         if self.thermo_data is None:
+            # Get step data from the file
             step = self.file.get_next_step()
-            while True:
+
+            while True: # Loop through the steps
                 if not step:
+                    # End of file
                     break
 
                 elif thermo_flag:
+                    # Check if thermo data is available in the step and get it
                     thermo_flag = self.get_step_thermodata(step)
+                    # Get the next step
                     step = self.file.get_next_step()
 
                 elif not thermo_flag:
+                    # No thermo data found in the step
                     print('No thermo data found in the file')
                     break
+
+                # Print the step number
                 print('Step n. ', i, ' processed')
+                # Increment the step counter
                 i += 1
 
             if thermo_flag and self.thermo_keywords is not None:
+                # Create a DataFrame from the thermo data
                 thermo = pd.DataFrame(self.thermo_data,
                                       columns=self.thermo_keywords)
                 return thermo
             else:
+                # No thermo data found
                 return None
         else:
+            # Create a DataFrame from the thermo data
             thermo = pd.DataFrame(self.thermo_data,
                                   columns=self.thermo_keywords)
             return thermo
@@ -152,7 +175,8 @@ class Simulation:
         Exception
             If no thermo data is found in the step.
         """
-        thermo_flag = True
+        thermo_flag = True # Flag for thermo data availability
+
         if self.thermo_keywords is None:
             # Check if thermo data is available in the step
             thermo_flag = self.check_thermo_data(step)
@@ -163,10 +187,12 @@ class Simulation:
                 self.thermo_data = []
 
         if thermo_flag:
+            # Append thermo data to the thermo_data attribute
             self.thermo_data.append(step['thermo']['data'])
             return thermo_flag
 
         else:
+            # No thermo data found in the step
             thermo_flag = False
             return thermo_flag
 
@@ -187,11 +213,14 @@ class Simulation:
             False if thermo data is not available or has different lengths.
         """
         try:
+            # Check if thermo data is available in the step
             thermo_keywords = step['thermo']['keywords']
             thermo_data = step['thermo']['data']
         except KeyError:
+            # No thermo data found in the step
             return False
         else:
+            # Check if thermo data has the same length
             if len(thermo_keywords) != len(thermo_data):
                 return False
             return True

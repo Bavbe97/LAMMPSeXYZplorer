@@ -194,53 +194,145 @@ class GraphMaker:
 
         # Start plotting loop
         while True:
-            keyword_check = True
-            # Give info on how to plot
-            print('Define printing settings:')
-            print('Input format: mode [q_name1, q_name2, q_name3]')
-            print('To exit the program type: "exit"')
-            print('Modes')
-            print('Display - Displays a multiple figures with all "Time vs. '
-                  'Quantity" data plotted separately')
-            print('Combine - Displays a single figure with all "Time vs. '
-                  'Quantity" data plotted together.')
+
+            # Initialize variables
+            input_check = True  # Check if input is valid
+            keyword_check = True  # Check if keywords are plottable
+
+            # Print info on how to plot
+            self.print_info()
 
             # Obtain input by user
             graph_input = input('Select which quantities to display and how: ')
-            # Get data from input
-            graph_input = graph_input.replace(' ', '').split('[')
-            # Get plotting mode
-            mode = graph_input[0].lower()
+
+            # Check and process input
+            input_check, mode, keywords_list = self.check_and_process_input(
+                graph_input)
 
             # Exit the loop
             if mode == 'exit':
                 print('Exiting the loop...')
                 break
 
-            # Get keywords to plot
-            try:
-                keywords_list = graph_input[1].replace(']', '').split(',')
-            except ValueError:
+            # If input is invalid, restart the loop
+            if not input_check:
                 print('Invalid input, try again.')
                 continue
-            except IndexError:
-                print('Invalid input, try again.')
+
+            if input_check:
+                keyword_check = self.check_keywords(keywords_list)
+
+            # If input keywords are invalid, restart the loop
+            if not keyword_check:
+                print('Invalid keywords, try again.')
                 continue
-            # Check if input keywords are plottable
-            for keyword in keywords_list:
-                if keyword not in list(self.df.columns):
-                    print('Error: ' + keyword + ' not found')
-                    keyword_check = False
 
             if keyword_check:
-                if mode.lower().startswith('d'):
-                    # Plot using display mode
-                    for keyword in keywords_list:
-                        self.plot_graph([keyword])
-                if mode.lower().startswith('c'):
-                    # Plot using combine mode
-                    self.plot_graph(keywords_list)
+                self.select_graph_mode(mode, keywords_list)
+
             else:
                 # If input is invalid, restart the loop
                 print('Invalid selection, try again.')
                 continue
+
+    def print_info(self):
+        """
+        Prints information about the inputs of the interactive mode.
+
+        Returns
+        -------
+        None
+        """
+
+        print('Define printing settings:')  # pragma: no cover
+        print('Input format: mode [q_name1, q_name2, q_name3]')  # pragma: no cover
+        print('To exit the program type: "exit"')  # pragma: no cover
+        print('Modes')  # pragma: no cover
+        print('Display - Displays a multiple figures with all "Time vs. '  # pragma: no cover
+              'Quantity" data plotted separately')  # pragma: no cover
+        print('Combine - Displays a single figure with all "Time vs. '  # pragma: no cover
+              'Quantity" data plotted together.')  # pragma: no cover
+
+    def check_and_process_input(self, graph_input):
+        """
+        Check and process the input provided by the user.
+
+        Arguments
+        ---------
+        graph_input : str
+            The input provided by the user.
+
+        Returns
+        -------
+        input_check : bool
+            True if the input is valid, False otherwise.
+        mode : str
+            The mode in which to run the GraphMaker.
+        keywords_list : list
+            A list of keywords to be used for processing columns.
+        """
+
+        input_check = True
+
+        # Obtain input by user
+
+        # Get data from input
+        graph_input = graph_input.replace(' ', '').split('[')
+
+        # Get plotting mode
+        mode = graph_input[0].lower()
+
+        try:
+            keywords_list = graph_input[1].replace(']', '').split(',')
+        except ValueError:
+            keywords_list = []
+            input_check = False
+        except IndexError:
+            keywords_list = []
+            input_check = False
+
+        return input_check, mode, keywords_list
+
+    def check_keywords(self, keywords_list):
+        """
+        Check if the keywords provided are valid.
+
+        Arguments
+        ---------
+        keywords_list : list
+            A list of keywords to be checked.
+
+        Returns
+        -------
+        bool
+            True if all keywords are valid, False otherwise.
+        """
+
+        for keyword in keywords_list:
+            if keyword not in self.df.columns:
+                return False
+        return True
+
+    def select_graph_mode(self, mode, keywords_list):
+        """
+        Select the graph mode based on the user input.
+
+        Arguments
+        ---------
+        mode : str
+            The mode in which to run the GraphMaker.
+        keywords_list : list
+            A list of keywords to be used for processing columns.
+
+        Returns
+        -------
+        None
+        """
+
+        if mode.lower().startswith('d'):
+            # Plot using display mode
+            for keyword in keywords_list:
+                self.plot_graph([keyword])
+        if mode.lower().startswith('c'):
+            # Plot using combine mode
+            self.plot_graph(keywords_list)

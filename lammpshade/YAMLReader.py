@@ -50,7 +50,7 @@ class YAMLReader:
         try:
             # Open the file
             self.file = open(filename, 'r')
-        
+
         # Handle FileNotFoundError
         except FileNotFoundError:
             raise FileNotFoundError(f"File '{filename}' not found.")
@@ -85,41 +85,106 @@ class YAMLReader:
         # Assure right formatting of the value
         value = value.strip()
 
-        # Try to convert
+        int_value = self.convert_to_int(value)
+        if int_value is not None:
+            return int_value
+
+        float_value = self.convert_to_float(value)
+        if float_value is not None:
+            return float_value
+
+        list_value = self.convert_to_list(value)
+        if list_value is not None:
+            return list_value
+
+        return value
+
+    def convert_to_int(self, value):
+        """
+        Converts a string variable to an INT based on its content.
+
+        Parameters
+        ----------
+        value : str
+            String that needs to be converted.
+
+        Returns
+        -------
+        int(value) : int
+            If the content of the string contains only digits, it's converted
+            to an integer.
+        None : None"""
         if value.isdigit() or (value.startswith('-') and value[1:].isdigit()):
             return int(value)
+        return None
 
+    def convert_to_float(self, value):
+        """
+        Converts a string variable to a FLOAT based on its content.
+
+        Parameters
+        ----------
+        value : str
+            String that needs to be converted.
+
+        Returns
+        -------
+        float(value) : float
+            If the string contains a dot ('.') and the content is in a valid
+            floating-point format, it's converted to a float.
+        None : None
+        """
         if '.' in value:
             # Try to convert it into float
             try:
                 return float(value)
             except ValueError:
                 pass
+        return None
 
+    def convert_to_list(self, value):
+        """
+        Converts a string variable to a LIST based on its content.
+
+        Parameters
+        ----------
+        value : str
+            String that needs to be converted.
+
+        Returns
+        -------
+        converted_elements : list
+            If the string starts and ends with square brackets ('[', ']'),
+            it's converted to a list of elements. Elements in the list are
+            converted to integers, floats, or remain as strings based on their
+            content.
+        None : None
+        """
         # Check if the value is a list
         if value.startswith('[') and value.endswith(']'):
-            # Get elements
             elements = value[1:-1].split(',')
             elements = [elem.strip() for elem in elements]
             converted_elements = []
-            # Try to convert the elements
             for elem in elements:
-                if elem.isdigit() or (elem.startswith('-') and
-                                      elem[1:].isdigit()):
-                    converted_elements.append(int(elem))
-                elif '.' in elem:
-                    try:
-                        converted_elements.append(float(elem))
-                    except ValueError:
-                        converted_elements.append(elem)
-                elif not elem:
-                    continue
+                # Try to convert to int
+                int_value = self.convert_to_int(elem)
+                if int_value is not None:
+                    converted_elements.append(int_value)
                 else:
-                    converted_elements.append(elem)
-
+                    # Try to convert to float
+                    float_value = self.convert_to_float(elem)
+                    if float_value is not None:
+                        converted_elements.append(float_value)
+                    else:
+                        # If the element is not a number, keep it as a string
+                        converted_elem = elem
+                        # Check if the element is empty
+                        if converted_elem != '':
+                            converted_elements.append(converted_elem)
+            # Return the list
             return converted_elements
-
-        return value
+        # Return None if the value is not a list
+        return None
 
     def get_next_step(self):
         """

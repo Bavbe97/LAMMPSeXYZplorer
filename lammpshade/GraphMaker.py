@@ -234,7 +234,7 @@ class GraphMaker:
             if not input_check:
                 print('Invalid input, try again.')
                 continue
-            
+
             # Check if keywords are valid
             if input_check:
                 keyword_check = self.check_keywords(keywords_list)
@@ -243,7 +243,7 @@ class GraphMaker:
             if not keyword_check:
                 print('Invalid keywords, try again.')
                 continue
-            
+
             # If input is valid, run the GraphMaker
             if keyword_check:
                 self.select_graph_mode(mode, keywords_list)

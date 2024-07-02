@@ -114,6 +114,172 @@ class Test_YAMLReader_convert_value(unittest.TestCase):
                                                                 'hello']
 
 
+class Test_YAMLReader_convert_to_int(unittest.TestCase):
+    """
+    Tests the convert_to_int method of the YAMLReader class.
+    """
+
+    def test_convert_to_int_valid_integer(self):
+        """
+        Test if the input string is converted to an integer when it is a
+        valid integer string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_int method with a valid integer string.
+        3. Assert that the method returns the corresponding integer value.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_int("123")
+        self.assertEqual(result, 123)
+
+    def test_convert_to_int_negative_integer(self):
+        """
+        Test if the input string is converted to a negative integer when it is
+        a valid negative integer string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_int method with a valid negative integer string.
+        3. Assert that the method returns the corresponding negative integer
+           value.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_int("-123")
+        self.assertEqual(result, -123)
+
+    def test_convert_to_int_invalid_integer(self):
+        """
+        Test if the input string is not converted to an integer when it is an
+        invalid integer string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_int method with an invalid integer string.
+        3. Assert that the method returns None.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_int("abc")
+        self.assertIsNone(result)
+
+
+class Test_YAMLReader_convert_to_float(unittest.TestCase):
+    """
+    Tests the convert_to_float method of the YAMLReader class.
+    """
+    def test_convert_to_float_valid_float(self):
+        """
+        Test if the input string is converted to a float when it is a
+        valid float string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_float method with a valid float string.
+        3. Assert that the method returns the corresponding float value.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_float("3.14")
+        self.assertEqual(result, 3.14)
+
+    def test_convert_to_float_negative_float(self):
+        """
+        Test if the input string is converted to a negative float when it is
+        a valid negative float string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_float method with a valid negative float string.
+        3. Assert that the method returns the corresponding negative float
+           value.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_float("-3.14")
+        self.assertEqual(result, -3.14)
+
+    def test_convert_to_float_invalid_float(self):
+        """
+        Test if the input string is not converted to a float when it is an
+        invalid float string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_float method with an invalid float string.
+        3. Assert that the method returns None.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_float("abc")
+        self.assertIsNone(result)
+
+    def test_convert_to_float_invalid_float_format(self):
+        """
+        Test if the input string is not converted to a float when it is an
+        invalid float string format.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_float method with an invalid float string
+           format.
+        3. Assert that the method returns None.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        result = yaml_reader.convert_to_float("3.14.15")
+        self.assertIsNone(result)
+
+
+class Test_YAMLReader_convert_to_list(unittest.TestCase):
+    """
+    Tests the convert_to_list method of the YAMLReader class.
+    """
+
+    def test_convert_to_list_valid_list(self):
+        """
+        Test if the convert_to_list method returns a list of corresponding
+        elements when called with a valid list string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_list method with a valid list string.
+        3. Assert that the method returns a list of corresponding elements.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        # Call the convert_to_list method with a valid list string
+        result = yaml_reader.convert_to_list("[1, 2, 3]")
+        self.assertEqual(result, [1, 2, 3])
+
+    def test_convert_to_list_empty_list(self):
+        """
+        Test if the convert_to_list method returns an empty list when called
+        with an empty list string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_list method with an empty list string.
+        3. Assert that the method returns an empty list.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        # Call the convert_to_list method with an empty list string
+        result = yaml_reader.convert_to_list("[]")
+        self.assertEqual(result, [])
+
+    def test_convert_to_list_invalid_list(self):
+        """
+        Test if the convert_to_list method returns None when called with an
+        invalid list string.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the convert_to_list method with an invalid list string.
+        3. Assert that the method returns None.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        # Call the convert_to_list method with an invalid list string
+        result = yaml_reader.convert_to_list("[1, 2, 3")
+        self.assertIsNone(result)
+
+
 class Test_YAMLReader_get_next_step(unittest.TestCase):
     """
     Tests the get_next_step method of the YAMLReader class.

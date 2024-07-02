@@ -659,5 +659,182 @@ class Test_YAMLReader_get_next_step(unittest.TestCase):
             assert step['box'] == [[0, 53], [0, 52.57], [0.439, 96.33]]
 
 
+class Test_YAMLReader_process_key_value_pair(unittest.TestCase):
+    """
+    Tests the process_key_value_pair method of the YAMLReader class.
+    """
+
+    def test_process_key_value_pair(self):
+        """
+        Test if the method correctly processes a line containing a key-value
+        pair.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_key_value_pair method with a line containing a
+           key-value pair.
+        3. Assert that the method returns the correct key and value.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "key: value"
+        key, value = yaml_reader.process_key_value_pair(line)
+        self.assertEqual(key, "key")
+        self.assertEqual(value, "value")
+
+    def test_process_key_value_pair_with_conversion(self):
+        """
+        Test if the method correctly processes a line containing a key-value
+        pair with value conversion.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_key_value_pair method with a line containing a
+           key-value pair with value conversion.
+        3. Assert that the method returns the correct key and converted value.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "key: 123"
+        key, value = yaml_reader.process_key_value_pair(line)
+        self.assertEqual(key, "key")
+        self.assertEqual(value, 123)
+
+    def test_process_key_no_value(self):
+        """
+        Test if the method correctly processes a line containing a key without
+        a value.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_key_value_pair method with a line containing a
+           key without a value.
+        3. Assert that the method returns the correct key and an empty string.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "key:"
+        key, value = yaml_reader.process_key_value_pair(line)
+        self.assertEqual(key, "key")
+        self.assertFalse(value)
+
+
+class Test_YAMLReader_process_list(unittest.TestCase):
+    """
+    Tests the process_list method of the YAMLReader class.
+    """
+
+    def test_process_list_single_element(self):
+        """
+        Test if the process_list method returns a list with a single element
+        when called with a line containing a single element.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_list method with a line containing a single
+        element.
+        3. Assert that the method returns a list with the single element.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "- element1\n"
+        expected_result = ['element1']
+        result, _ = yaml_reader.process_list(line)
+        self.assertEqual(result, expected_result)
+
+    def test_process_list_empty_line(self):
+        """
+        Test if the process_list method returns an empty list when called with
+        an empty line.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_list method with an empty line.
+        3. Assert that the method returns an empty list.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "\n"
+        expected_result = []
+        result, _ = yaml_reader.process_list(line)
+        self.assertEqual(result, expected_result)
+
+    def test_process_list_no_elements(self):
+        """
+        Test if the process_list method returns an empty list when called with
+        a line containing no elements.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_list method with a line containing no elements.
+        3. Assert that the method returns an empty list.
+        """
+
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "-\n"
+        expected_result = []
+        result, _ = yaml_reader.process_list(line)
+        self.assertEqual(result, expected_result)
+
+
+class Test_YAMLReader_process_dictionary(unittest.TestCase):
+    """
+    Tests the process_dictionary method of the YAMLReader class.
+    """
+
+    def test_process_dictionary_single_element(self):
+        """
+        Test if the process_dictionary method correctly processes a line
+        containing a single element dictionary.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_dictionary method with a line containing a single
+           element dictionary.
+        3. Assert that the method returns a dictionary with the correct key and
+           value.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "- key: value\n"
+        expected_result = {'key': 'value'}
+        result, next_line = yaml_reader.process_dictionary(line)
+        self.assertEqual(result, expected_result)
+        self.assertEqual(next_line, '---\n')
+
+    def test_process_dictionary_empty_line(self):
+        """
+        Test if the process_dictionary method correctly handles an empty line.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_dictionary method with an empty line.
+        3. Assert that the method returns an empty dictionary and an empty
+           string as the next line.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = ''
+        expected_result = {}
+        result, next_line = yaml_reader.process_dictionary(line)
+        self.assertEqual(result, expected_result)
+        self.assertEqual(next_line, '')
+
+    def test_process_dictionary_no_elements(self):
+        """
+        Test if the process_dictionary method correctly handles a line with no
+        elements.
+
+        Steps:
+        1. Instantiate the YAMLReader class.
+        2. Call the process_dictionary method with a line with no elements.
+        3. Assert that the method returns an empty dictionary and the same line
+           as the next line.
+        """
+        yaml_reader = YAMLReader(os.path.join('tests', 'test.yaml'))
+        line = "- \n"
+        expected_result = {}
+        result, next_line = yaml_reader.process_dictionary(line)
+        self.assertEqual(result, expected_result)
+        self.assertEqual(next_line, line)
+
+
 if __name__ == '__main__':
     unittest.main()

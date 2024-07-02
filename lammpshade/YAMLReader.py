@@ -215,11 +215,8 @@ class YAMLReader:
 
             if ':' in line:
                 # Check for a key-value pair
-                key, value = line.split(':', 1)
-                key = key.strip()
-                value = value.strip()
+                key, value = self.process_key_value_pair(line)
                 if value:
-                    value = self.convert_value(value)
                     step[key] = value
                     line = self.file.readline()
                 else:
@@ -233,22 +230,15 @@ class YAMLReader:
                             # Return function if the step ends abruptly
                             self.current_step = step
                             return step
-                        elif '-' in line and ':' not in line:
-                            # Get list
-                            d_value = line.split('- ')[1]
-                            d_value = self.convert_value(d_value)
-                            data_list.append(d_value)
-                            step[key] = data_list
-                            line = self.file.readline()
-                        elif '-' in line and ':' in line:
-                            # Get dictionary
-                            d_key = line.replace(' ', '').split(':')[0]
-                            d_key = d_key.replace('-', '')
-                            d_value = line.split(':')[1]
-                            d_value = self.convert_value(d_value)
-                            data_dic[d_key] = d_value
-                            step[key] = data_dic
-                            line = self.file.readline()
+                        elif '-' in line:
+                            if ':' not in line:
+                                # Get list
+                                data_list, line = self.process_list(line)
+                                step[key] = data_list
+                            else:
+                                # Get dictionary
+                                data_dic, line = self.process_dictionary(line)
+                                step[key] = data_dic
                         else:
                             # Exit loop
                             data_reading = False
@@ -259,3 +249,77 @@ class YAMLReader:
         # Close the file when done reading
         self.file.close()
         return step
+
+    def process_key_value_pair(self, line):
+        """
+        Processes a line containing a key-value pair.
+
+        Parameters
+        ----------
+        line : str
+            A string containing a key-value pair.
+
+        Returns
+        -------
+        key : str
+            The key extracted from the line.
+        value : str
+            The value extracted from the line.
+        """
+        key, value = line.split(':', 1)
+        key = key.strip()
+        value = value.strip()
+        if value:
+            value = self.convert_value(value)
+        return key, value
+
+    def process_list(self, initial_line):
+        """
+        Processes a line containing a list.
+
+        Parameters
+        ----------
+        initial_line : str
+            A string containing the first element of the list.
+
+        Returns
+        -------
+        data_list : list
+            A list containing the elements of the list.
+        line : str
+            The next line after the list.
+        """
+        data_list = []
+        line = initial_line
+        while '- ' in line and ':' not in line:
+            d_value = line.split('- ')[1].strip()
+            d_value = self.convert_value(d_value)
+            data_list.append(d_value)
+            line = self.file.readline()
+        return data_list, line
+
+    def process_dictionary(self, initial_line):
+        """
+        Processes a line containing a dictionary.
+
+        Parameters
+        ----------
+        initial_line : str
+            A string containing the first element of the dictionary.
+
+        Returns
+        -------
+        data_dic : dict
+            A dictionary containing the elements of the dictionary.
+        line : str
+            The next line after the dictionary.
+        """
+        data_dic = {}
+        line = initial_line
+        while '- ' in line and ':' in line:
+            d_key, d_value = line.replace(' ', '').split(':', 1)
+            d_key = d_key.replace('-', '').strip()
+            d_value = self.convert_value(d_value.strip())
+            data_dic[d_key] = d_value
+            line = self.file.readline()
+        return data_dic, line

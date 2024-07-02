@@ -92,7 +92,7 @@ class Simulation:
                 if thermo_flag:
                     # Get thermo data from the step
                     thermo_flag = self.get_step_thermodata(step)
-                
+
                 # Write the step to the output file
                 out.write_to_xyz(step)
 
@@ -113,14 +113,14 @@ class Simulation:
         None :
             If no thermo data is found.
         """
-        i = 0 # Counter for the number of steps processed
-        thermo_flag = True # Flag for thermo data availability
+        i = 0  # Counter for the number of steps processed
+        thermo_flag = True  # Flag for thermo data availability
 
         if self.thermo_data is None:
             # Get step data from the file
             step = self.file.get_next_step()
 
-            while True: # Loop through the steps
+            while True:  # Loop through the steps
                 if not step:
                     # End of file
                     break
@@ -175,7 +175,7 @@ class Simulation:
         Exception
             If no thermo data is found in the step.
         """
-        thermo_flag = True # Flag for thermo data availability
+        thermo_flag = True  # Flag for thermo data availability
 
         if self.thermo_keywords is None:
             # Check if thermo data is available in the step

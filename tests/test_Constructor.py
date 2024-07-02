@@ -172,6 +172,11 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         """
         Test if the number of atoms is not included in the input file.
         The expected behavior is that a KeyError is raised.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Assert that a KeyError is raised.
         """
         test = Simulation(os.path.join('tests', 'test_nonatoms.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
@@ -182,6 +187,11 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         """
         Test if required atom keywords are not included in the input file.
         The expected behavior is that a KeyError is raised.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Assert that a KeyError is raised.
         """
         test = Simulation(os.path.join('tests', 'test_noatomskeywords.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')
@@ -192,6 +202,11 @@ class Test_Simulation_convert_to_xyz(unittest.TestCase):
         """
         Test if atom data is not included in the input file.
         The expected behavior is that a KeyError is raised.
+
+        Steps:
+        1. Create a Simulation object with the specified file path.
+        2. Call the convert_to_xyz method with the specified output path.
+        3. Assert that a KeyError is raised.
         """
         test = Simulation(os.path.join('tests', 'test_noatomsdata.yaml'))
         output_path = os.path.join(os.getcwd(), 'tests', 'test.xyz')

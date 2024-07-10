@@ -890,7 +890,3 @@ class Test_GraphMaker_select_graph_mode(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-if __name__ == '__main__':
-    unittest.main()
